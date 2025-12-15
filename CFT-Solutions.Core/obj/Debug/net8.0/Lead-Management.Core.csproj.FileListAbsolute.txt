@@ -1,0 +1,13 @@
+C:\sonu\BaseRepo\Lead-Management.Core\bin\Debug\net8.0\Lead-Management.Core.deps.json
+C:\sonu\BaseRepo\Lead-Management.Core\bin\Debug\net8.0\Lead-Management.Core.dll
+C:\sonu\BaseRepo\Lead-Management.Core\bin\Debug\net8.0\Lead-Management.Core.pdb
+C:\sonu\BaseRepo\Lead-Management.Core\obj\Debug\net8.0\Lead-Management.Core.csproj.AssemblyReference.cache
+C:\sonu\BaseRepo\Lead-Management.Core\obj\Debug\net8.0\Lead-Management.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\sonu\BaseRepo\Lead-Management.Core\obj\Debug\net8.0\Lead-Management.Core.AssemblyInfoInputs.cache
+C:\sonu\BaseRepo\Lead-Management.Core\obj\Debug\net8.0\Lead-Management.Core.AssemblyInfo.cs
+C:\sonu\BaseRepo\Lead-Management.Core\obj\Debug\net8.0\Lead-Management.Core.csproj.CoreCompileInputs.cache
+C:\sonu\BaseRepo\Lead-Management.Core\obj\Debug\net8.0\Lead-Management.Core.sourcelink.json
+C:\sonu\BaseRepo\Lead-Management.Core\obj\Debug\net8.0\Lead-Management.Core.dll
+C:\sonu\BaseRepo\Lead-Management.Core\obj\Debug\net8.0\refint\Lead-Management.Core.dll
+C:\sonu\BaseRepo\Lead-Management.Core\obj\Debug\net8.0\Lead-Management.Core.pdb
+C:\sonu\BaseRepo\Lead-Management.Core\obj\Debug\net8.0\ref\Lead-Management.Core.dll
