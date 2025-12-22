@@ -1,0 +1,259 @@
+﻿@using System.Security.Claims
+@using CFT_Solutions.Core
+@inject IWorkContext WorkContext
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CFT_Solutions.Web</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    <style>
+        :root {
+            --header-height: 50px;
+            --footer-height: 48px;
+            --sidebar-width: 220px;
+            --sidebar-collapsed-width: 72px;
+            --brand-color: #2b6cb0;
+            --accent: #1e90ff;
+            --muted: #6c757d;
+            --item-hover: rgba(30,144,255,0.08);
+        }
+
+        /* Layout base */
+        .app-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* header/footer kept fixed */
+        .app-header { position: fixed; top: 0; left: 0; right: 0; height: var(--header-height); display:flex; align-items:center; justify-content:space-between; padding:0 .75rem; background:#fff; border-bottom:1px solid #e5e5e5; z-index:1040; }
+        footer.footer { position: fixed; left:0; right:0; bottom:0; height:var(--footer-height); display:flex; align-items:center; z-index:1030; background:#fff; border-top:1px solid #e5e5e5; }
+
+        .app-body { flex:1 0 auto; margin-top:var(--header-height); margin-bottom:var(--footer-height); overflow:auto; }
+
+        .app-content-row { display:flex; }
+
+        /* -- Attractive sidebar styles -- */
+        .app-sidebar {
+            width: var(--sidebar-width);
+            transition: width .22s ease, transform .22s ease, box-shadow .2s ease;
+            border-right: none;
+            background: linear-gradient(180deg, rgba(30,144,255,0.06), rgba(43,108,176,0.02));
+            box-shadow: 0 2px 8px rgba(11,15,22,0.04);
+            min-height: calc(100vh - var(--header-height) - var(--footer-height));
+            padding-top: 1rem;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+            display:flex;
+            flex-direction:column;
+            gap:.5rem;
+        }
+
+        .app-sidebar .list-group-item {
+            border: none;
+        }
+
+        .app-main {
+            flex: 1;
+            padding: 1.25rem;
+        }
+
+        /* Collapsed state */
+        .sidebar-collapsed .app-sidebar {
+            width: 0;
+            overflow: hidden;
+            transform: translateX(-8px);
+        }
+
+        .sidebar-collapsed .app-main {
+            padding-left: 1rem;
+        }
+
+        .brand-area {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .sidebar-toggle {
+            background: transparent;
+            border: none;
+            font-size: 1.25rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: .25rem .5rem;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .user-name {
+            font-weight: 600;
+        }
+
+        @@media (max-width: 768px) {
+            .app-sidebar { position: absolute; z-index: 1040; height: calc(100vh - var(--header-height)); }
+            .sidebar-collapsed .app-sidebar { transform: translateX(-100%); }
+            .app-body { margin-bottom: var(--footer-height); }
+            }
+
+        /* Logo sizing: keep it inside header without creating overflow */
+        .header-logo {
+            height: calc(var(--header-height) - 12px); /* fits within header */
+            max-height: 100%;
+            width: auto;
+            display: block;
+            object-fit: contain;
+        }
+
+    </style>
+</head>
+<body>
+    @{
+        var currentUser = WorkContext?.CurrentUser;
+        var userName = currentUser?.EmailID ?? User?.Identity?.Name ?? "Guest";
+        var userRole = currentUser?.DefaultRoleName ?? User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value ?? "";
+        Func<string, bool> HasPermission = (page) =>
+        {
+            if (currentUser?.DefaultPermissions == null) return false;
+            return currentUser.DefaultPermissions.Any(p => !string.IsNullOrEmpty(p) && p.IndexOf(page, System.StringComparison.OrdinalIgnoreCase) >= 0);
+        };
+    }
+
+    <div class="app-wrapper">
+        <header class="app-header">
+            <div class="brand-area">
+                <button id="sidebarToggle" class="sidebar-toggle" aria-label="Toggle sidebar" title="Toggle sidebar">
+                    &#9776;
+                </button>
+
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="DashBoard" asp-action="Index">
+                    <img src="~/images/Logo1.png" alt="Lead Management Logo" class="header-logo" />
+                </a>
+            </div>
+
+            <div class="user-area">
+                <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-0">
+                    <div class="container-fluid p-0">
+                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                            <ul class="navbar-nav ms-auto">
+                                @if (User?.Identity?.IsAuthenticated == true)
+                                {
+                                    <li class="nav-item nav-link">
+                                        <strong>@userName</strong>
+                                        @if (!string.IsNullOrEmpty(userRole))
+                                        {
+                                            <span class="text-muted"> (@userRole)</span>
+                                        }
+                                    </li>
+                                    <li class="nav-item">
+                                        <form asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
+                                        </form>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link" asp-controller="Login" asp-action="Index">Login</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <div class="app-body">
+            <div class="container-fluid">
+                <div class="row app-content-row">
+                    <aside class="app-sidebar col-md-2 bg-light sidebar py-3">
+                        <div class="list-group">
+                            @if (HasPermission("Dashboard"))
+                            {
+                                <a class="list-group-item list-group-item-action" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                            }
+                            @if (HasPermission("UserMaster"))
+                            {
+                                <a class="list-group-item list-group-item-action" asp-controller="UserMaster" asp-action="Index">User Master</a>
+                            }
+                            @if (HasPermission("Reports"))
+                            {
+                                <a class="list-group-item list-group-item-action" asp-controller="Reports" asp-action="Index">Reports</a>
+                            }
+                            @if (HasPermission("Users"))
+                            {
+                                <a class="list-group-item list-group-item-action" asp-controller="User" asp-action="Index">Users</a>
+                            }
+                            @if (HasPermission("Settings"))
+                            {
+                                <a class="list-group-item list-group-item-action" asp-controller="Settings" asp-action="Index">Settings</a>
+                            }
+
+                            @if (User?.Identity?.IsAuthenticated == true && (currentUser?.DefaultPermissions == null || !currentUser.DefaultPermissions.Any()))
+                            {
+                                <a class="list-group-item list-group-item-action" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                            }
+                        </div>
+                    </aside>
+
+                    <main class="app-main col-md-10 py-3">
+                        @RenderBody()
+                    </main>
+                </div>
+            </div>
+        </div>
+
+        <footer class="border-top footer text-muted mt-3">
+            <div class="container text-center py-2">
+                &copy; 2025 - CFT_Solutions.Web
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/js/jquery.datatables.min.js"></script>
+    
+    <script>
+        (function () {
+            var toggleBtn = document.getElementById('sidebarToggle');
+            var storageKey = 'lead_sidebar_collapsed';
+            function setCollapsed(collapsed) {
+                if (collapsed) {
+                    document.body.classList.add('sidebar-collapsed');
+                    toggleBtn.setAttribute('aria-expanded', 'false');
+                } else {
+                    document.body.classList.remove('sidebar-collapsed');
+                    toggleBtn.setAttribute('aria-expanded', 'true');
+                }
+            }
+            try {
+                var saved = localStorage.getItem(storageKey);
+                if (saved === '1') setCollapsed(true);
+            } catch (e) { }
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function (e) {
+                    var collapsed = !document.body.classList.contains('sidebar-collapsed');
+                    setCollapsed(collapsed);
+                    try { localStorage.setItem(storageKey, collapsed ? '1' : '0'); } catch (ex) { }
+                });
+            }
+        })();
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
