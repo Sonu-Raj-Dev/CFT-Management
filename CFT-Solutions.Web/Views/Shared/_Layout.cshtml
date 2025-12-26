@@ -1,119 +1,381 @@
 ﻿@using System.Security.Claims
 @using CFT_Solutions.Core
 @inject IWorkContext WorkContext
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - CFT_Solutions.Web</title>
+    <title>@ViewData["Title"] - CFT Complaint Management System</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="~/css/site.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <style>
         :root {
             --header-height: 50px;
             --footer-height: 48px;
-            --sidebar-width: 220px;
-            --sidebar-collapsed-width: 72px;
-            --brand-color: #2b6cb0;
-            --accent: #1e90ff;
-            --muted: #6c757d;
-            --item-hover: rgba(30,144,255,0.08);
+            --sidebar-width: 250px;
+            --primary-blue: #2c3e50;
+            --secondary-blue: #3498db;
+            --light-blue: #ecf0f1;
+            --border-color: #dcdcdc;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --hover-bg: #f8f9fa;
+            --active-bg: #e8f4fc;
         }
 
-        /* Layout base */
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+            color: var(--text-dark);
+            background-color: #f5f7fa;
+        }
+
         .app-wrapper {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* header/footer kept fixed */
-        .app-header { position: fixed; top: 0; left: 0; right: 0; height: var(--header-height); display:flex; align-items:center; justify-content:space-between; padding:0 .75rem; background:#fff; border-bottom:1px solid #e5e5e5; z-index:1040; }
-        footer.footer { position: fixed; left:0; right:0; bottom:0; height:var(--footer-height); display:flex; align-items:center; z-index:1030; background:#fff; border-top:1px solid #e5e5e5; }
-
-        .app-body { flex:1 0 auto; margin-top:var(--header-height); margin-bottom:var(--footer-height); overflow:auto; }
-
-        .app-content-row { display:flex; }
-
-        /* -- Attractive sidebar styles -- */
-        .app-sidebar {
-            width: var(--sidebar-width);
-            transition: width .22s ease, transform .22s ease, box-shadow .2s ease;
-            border-right: none;
-            background: linear-gradient(180deg, rgba(30,144,255,0.06), rgba(43,108,176,0.02));
-            box-shadow: 0 2px 8px rgba(11,15,22,0.04);
-            min-height: calc(100vh - var(--header-height) - var(--footer-height));
-            padding-top: 1rem;
-            padding-left: 0.5rem;
-            padding-right: 0.5rem;
-            display:flex;
-            flex-direction:column;
-            gap:.5rem;
-        }
-
-        .app-sidebar .list-group-item {
-            border: none;
-        }
-
-        .app-main {
-            flex: 1;
-            padding: 1.25rem;
-        }
-
-        /* Collapsed state */
-        .sidebar-collapsed .app-sidebar {
-            width: 0;
-            overflow: hidden;
-            transform: translateX(-8px);
-        }
-
-        .sidebar-collapsed .app-main {
-            padding-left: 1rem;
+        /* Header - Matches Image */
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1040;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .brand-area {
             display: flex;
             align-items: center;
-            gap: .75rem;
+            gap: 15px;
         }
 
+        .header-logo {
+            height: 32px;
+            width: auto;
+            filter: brightness(0) invert(1);
+        }
+
+        .system-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Sidebar Toggle Button */
         .sidebar-toggle {
-            background: transparent;
+            background: rgba(255,255,255,0.2);
             border: none;
-            font-size: 1.25rem;
-            display: inline-flex;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 4px;
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: .25rem .5rem;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
+        .sidebar-toggle:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* User Area */
         .user-area {
             display: flex;
             align-items: center;
-            gap: .5rem;
+            gap: 15px;
+        }
+
+        .user-info {
+            color: white;
+            text-align: right;
         }
 
         .user-name {
             font-weight: 600;
+            font-size: 14px;
         }
 
+        .user-role {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        /* Main Layout */
+        .app-body {
+            flex: 1;
+            margin-top: var(--header-height);
+            margin-bottom: var(--footer-height);
+            overflow: auto;
+        }
+
+        .app-content-row {
+            display: flex;
+            min-height: calc(100vh - var(--header-height) - var(--footer-height));
+        }
+
+        /* Sidebar - Matches Image Theme */
+        .app-sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            border-right: 1px solid var(--border-color);
+            padding: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-header {
+            padding: 20px 15px;
+            background: var(--light-blue);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Menu Items - Exact Match to Image */
+        .sidebar-menu {
+            padding: 15px 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #555;
+            text-decoration: none;
+            border-left: 4px solid transparent;
+            transition: all 0.2s;
+            font-weight: 500;
+            margin: 2px 10px;
+            border-radius: 4px;
+        }
+
+        .nav-link:hover {
+            background-color: var(--hover-bg);
+            color: var(--secondary-blue);
+            border-left-color: var(--secondary-blue);
+        }
+
+        .nav-link.active {
+            background-color: var(--active-bg);
+            color: var(--secondary-blue);
+            border-left-color: var(--secondary-blue);
+            font-weight: 600;
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .nav-link.active i,
+        .nav-link:hover i {
+            color: var(--secondary-blue);
+        }
+
+        /* Main Content Area */
+        .app-main {
+            flex: 1;
+            padding: 20px;
+            overflow: auto;
+            background-color: #f8fafc;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .content-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .content-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        /* Footer - Matches Image */
+        footer.footer {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: var(--footer-height);
+            background: white;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1030;
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* Collapsed State */
+        .sidebar-collapsed .app-sidebar {
+            width: 70px;
+        }
+
+        .sidebar-collapsed .sidebar-title,
+        .sidebar-collapsed .nav-link span {
+            display: none;
+        }
+
+        .sidebar-collapsed .nav-link {
+            justify-content: center;
+            padding: 12px;
+            margin: 2px 5px;
+        }
+
+        .sidebar-collapsed .nav-link i {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        /* Table Styling - Matches Image */
+        .data-table {
+            width: 100%;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .data-table thead {
+            background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+        }
+
+        .data-table th {
+            padding: 12px 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            border-bottom: 2px solid var(--border-color);
+            text-align: left;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-complete {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-inprogress {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        /* Buttons */
+        .btn-outline-danger {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border: none;
+        }
+
+        /* Responsive */
         @@media (max-width: 768px) {
-            .app-sidebar { position: absolute; z-index: 1040; height: calc(100vh - var(--header-height)); }
-            .sidebar-collapsed .app-sidebar { transform: translateX(-100%); }
-            .app-body { margin-bottom: var(--footer-height); }
+            .app-sidebar {
+                position: fixed;
+                left: 0;
+                top: var(--header-height);
+                bottom: var(--footer-height);
+                z-index: 1035;
+                transform: translateX(-100%);
             }
-
-        /* Logo sizing: keep it inside header without creating overflow */
-        .header-logo {
-            height: calc(var(--header-height) - 12px); /* fits within header */
-            max-height: 100%;
-            width: auto;
-            display: block;
-            object-fit: contain;
+            
+            .sidebar-collapsed .app-sidebar {
+                transform: translateX(0);
+                width: 250px;
+            }
+            
+            .app-main {
+                padding: 15px;
+            }
+            
+            .system-title {
+                display: none;
+            }
         }
 
+        /* Utility Classes */
+        .text-muted {
+            color: #6c757d !important;
+        }
+
+        .border-bottom {
+            border-bottom: 1px solid var(--border-color) !important;
+        }
+
+        .bg-light {
+            background-color: #f8f9fa !important;
+        }
     </style>
 </head>
 <body>
@@ -126,129 +388,203 @@
             if (currentUser?.DefaultPermissions == null) return false;
             return currentUser.DefaultPermissions.Any(p => !string.IsNullOrEmpty(p) && p.IndexOf(page, System.StringComparison.OrdinalIgnoreCase) >= 0);
         };
+        
+        var controllerName = ViewContext.RouteData.Values["Controller"]?.ToString();
+        var actionName = ViewContext.RouteData.Values["Action"]?.ToString();
     }
 
     <div class="app-wrapper">
         <header class="app-header">
             <div class="brand-area">
-                <button id="sidebarToggle" class="sidebar-toggle" aria-label="Toggle sidebar" title="Toggle sidebar">
-                    &#9776;
+                <button id="sidebarToggle" class="sidebar-toggle" aria-label="Toggle sidebar">
+                    <i class="fas fa-bars"></i>
                 </button>
-
-                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="DashBoard" asp-action="Index">
-                    <img src="~/images/Logo1.png" alt="Lead Management Logo" class="header-logo" />
-                </a>
+                <img src="~/images/Logo1.png" alt="CFT Logo" class="header-logo" />
+                <span class="system-title">CFT Complaint Management System</span>
             </div>
 
             <div class="user-area">
-                <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-0">
-                    <div class="container-fluid p-0">
-                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                            <ul class="navbar-nav ms-auto">
-                                @if (User?.Identity?.IsAuthenticated == true)
-                                {
-                                    <li class="nav-item nav-link">
-                                        <strong>@userName</strong>
-                                        @if (!string.IsNullOrEmpty(userRole))
-                                        {
-                                            <span class="text-muted"> (@userRole)</span>
-                                        }
-                                    </li>
-                                    <li class="nav-item">
-                                        <form asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
-                                        </form>
-                                    </li>
-                                }
-                                else
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="Login" asp-action="Index">Login</a>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
+                @if (User?.Identity?.IsAuthenticated == true)
+                {
+                    <div class="user-info d-none d-md-block">
+                        <div class="user-name">@userName</div>
+                        @if (!string.IsNullOrEmpty(userRole))
+                        {
+                            <div class="user-role">@userRole</div>
+                        }
                     </div>
-                </nav>
+                    <form asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a class="btn btn-primary btn-sm" asp-controller="Login" asp-action="Index">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                }
             </div>
         </header>
 
         <div class="app-body">
-            <div class="container-fluid">
-                <div class="row app-content-row">
-                    <aside class="app-sidebar col-md-2 bg-light sidebar py-3">
-                        <div class="list-group">
+            <div class="app-content-row">
+                <aside class="app-sidebar">
+                    @* <div class="sidebar-header">
+                        <h6 class="sidebar-title">Navigation Menu</h6>
+                    </div> *@
+                    
+                    <div class="sidebar-menu">
+                        <nav class="nav flex-column">
                             @if (HasPermission("Dashboard"))
                             {
-                                <a class="list-group-item list-group-item-action" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
+                                <a class="nav-link @(controllerName == "Dashboard" ? "active" : "")"
+                                   asp-controller="Dashboard" asp-action="Index">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                    <span>Dashboard</span>
+                                </a>
                             }
-                            @if (HasPermission("UserMaster"))
+                            <!-- Exact menu items from image -->
+                            @* <a class="nav-link @(controllerName == "Complaint" && actionName == "Index" ? "active" : "")" 
+                               asp-controller="Complaint" asp-action="Index">
+                                <i class="fas fa-list"></i>
+                                <span>View Complaints</span>
+                            </a>
+                            
+                            <a class="nav-link @(controllerName == "Complaint" && actionName == "Create" ? "active" : "")" 
+                               asp-controller="Complaint" asp-action="Create">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Register Complaint</span>
+                            </a> *@
+                            @* 
+                            <a class="nav-link @(controllerName == "CustomerMaster" ? "active" : "")" 
+                               asp-controller="CustomerMaster" asp-action="Index">
+                                <i class="fas fa-users"></i>
+                                <span>Customer Master</span>
+                            </a>
+                            
+                            <a class="nav-link @(controllerName == "EngineerMaster" ? "active" : "")" 
+                               asp-controller="EngineerMaster" asp-action="Index">
+                                <i class="fas fa-user-cog"></i>
+                                <span>Engineer Master</span>
+                            </a> *@
+                            
+                            <a class="nav-link @(controllerName == "UserMaster" ? "active" : "")" 
+                               asp-controller="UserMaster" asp-action="Index">
+                                <i class="fas fa-user-shield"></i>
+                                <span>User Master</span>
+                            </a>
+                            
+                            @* <a class="nav-link" href="#">
+                                <i class="fas fa-user-tag"></i>
+                                <span>User Role Mapping</span>
+                            </a>
+                            
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-key"></i>
+                                <span>Role Permission Mapping</span>
+                            </a> *@
+                            
+                            @* <a class="nav-link @(controllerName == "Profile" ? "active" : "")" 
+                               asp-controller="Profile" asp-action="Index">
+                                <i class="fas fa-user-circle"></i>
+                                <span>Profile</span>
+                            </a>
+                             *@
+                            <!-- Additional items from your code -->
+                           
+                            
+                            @* @if (HasPermission("Reports"))
                             {
-                                <a class="list-group-item list-group-item-action" asp-controller="UserMaster" asp-action="Index">User Master</a>
-                            }
-                            @if (HasPermission("Reports"))
-                            {
-                                <a class="list-group-item list-group-item-action" asp-controller="Reports" asp-action="Index">Reports</a>
-                            }
-                            @if (HasPermission("Users"))
-                            {
-                                <a class="list-group-item list-group-item-action" asp-controller="User" asp-action="Index">Users</a>
-                            }
-                            @if (HasPermission("Settings"))
-                            {
-                                <a class="list-group-item list-group-item-action" asp-controller="Settings" asp-action="Index">Settings</a>
-                            }
+                                <a class="nav-link @(controllerName == "Reports" ? "active" : "")" 
+                                   asp-controller="Reports" asp-action="Index">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <span>Reports</span>
+                                </a>
+                            } *@
+                        </nav>
+                    </div>
+                </aside>
 
-                            @if (User?.Identity?.IsAuthenticated == true && (currentUser?.DefaultPermissions == null || !currentUser.DefaultPermissions.Any()))
-                            {
-                                <a class="list-group-item list-group-item-action" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
-                            }
-                        </div>
-                    </aside>
-
-                    <main class="app-main col-md-10 py-3">
+                <main class="app-main">
+                    <div class="content-card">
+                        @if (!string.IsNullOrEmpty(ViewData["Title"]?.ToString()))
+                        {
+                            <div class="content-header">
+                                <h1 class="content-title">@ViewData["Title"]</h1>
+                            </div>
+                        }
                         @RenderBody()
-                    </main>
-                </div>
+                    </div>
+                </main>
             </div>
         </div>
 
-        <footer class="border-top footer text-muted mt-3">
-            <div class="container text-center py-2">
-                &copy; 2025 - CFT_Solutions.Web
+        <footer class="footer">
+            <div class="container">
+                &copy; 2025 CFT Complaint Management System
             </div>
         </footer>
-
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/bootbox.min.js"></script>
     <script src="~/lib/js/jquery.datatables.min.js"></script>
     
     <script>
         (function () {
-            var toggleBtn = document.getElementById('sidebarToggle');
-            var storageKey = 'lead_sidebar_collapsed';
+            const toggleBtn = document.getElementById('sidebarToggle');
+            const storageKey = 'cft_sidebar_collapsed';
+            
             function setCollapsed(collapsed) {
+                const body = document.body;
                 if (collapsed) {
-                    document.body.classList.add('sidebar-collapsed');
-                    toggleBtn.setAttribute('aria-expanded', 'false');
+                    body.classList.add('sidebar-collapsed');
+                    toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                    toggleBtn.setAttribute('title', 'Expand Sidebar');
                 } else {
-                    document.body.classList.remove('sidebar-collapsed');
-                    toggleBtn.setAttribute('aria-expanded', 'true');
+                    body.classList.remove('sidebar-collapsed');
+                    toggleBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    toggleBtn.setAttribute('title', 'Collapse Sidebar');
                 }
             }
+            
+            // Initialize from localStorage
             try {
-                var saved = localStorage.getItem(storageKey);
-                if (saved === '1') setCollapsed(true);
-            } catch (e) { }
-
+                const saved = localStorage.getItem(storageKey);
+                if (saved === '1') {
+                    setCollapsed(true);
+                }
+            } catch (e) {
+                console.log('LocalStorage not available');
+            }
+            
+            // Toggle sidebar
             if (toggleBtn) {
-                toggleBtn.addEventListener('click', function (e) {
-                    var collapsed = !document.body.classList.contains('sidebar-collapsed');
+                toggleBtn.addEventListener('click', function () {
+                    const collapsed = !document.body.classList.contains('sidebar-collapsed');
                     setCollapsed(collapsed);
-                    try { localStorage.setItem(storageKey, collapsed ? '1' : '0'); } catch (ex) { }
+                    try {
+                        localStorage.setItem(storageKey, collapsed ? '1' : '0');
+                    } catch (e) {
+                        console.log('Failed to save sidebar state');
+                    }
+                });
+            }
+            
+            // Auto-collapse on mobile when clicking outside
+            if (window.innerWidth <= 768) {
+                document.addEventListener('click', function(event) {
+                    const sidebar = document.querySelector('.app-sidebar');
+                    const isClickInsideSidebar = sidebar.contains(event.target);
+                    const isClickOnToggle = toggleBtn.contains(event.target);
+                    
+                    if (!isClickInsideSidebar && !isClickOnToggle && !document.body.classList.contains('sidebar-collapsed')) {
+                        setCollapsed(true);
+                    }
                 });
             }
         })();

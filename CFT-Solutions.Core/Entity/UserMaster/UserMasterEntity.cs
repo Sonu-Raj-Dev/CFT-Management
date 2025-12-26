@@ -20,5 +20,6 @@ namespace CFT_Solutions.Core.Entity.UserMaster
         public Int64 EngineerId { get; set; }     // added to bind selected engineer
         public int EmployeeType { get; set; }
 
+
     }
 }

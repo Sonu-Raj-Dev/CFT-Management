@@ -16,5 +16,6 @@ namespace CFT_Solutions.Core.Entity.User
         public Int64 DefaultRoleId { get; set; }
         public string EmailID { get; set; }
         public string LoginId { get; set; }
+        public string Password { get; set; }
     }
 }

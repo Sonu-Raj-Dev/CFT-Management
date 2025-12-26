@@ -104,8 +104,17 @@ namespace CFT_Solutions.Web.Controllers
                     }
                 }
 
-                PopulateDropdowns(entity);
-                return View(entity);
+                //PopulateDropdowns(entity);
+
+                return Json(new
+                {
+                    id = entity.Id,
+                    firstName = entity.FirstName,
+                    lastName = entity.LastName,
+                    emailId = entity.EmailId,
+                    mobileNumber = entity.MobileNo,
+                    isActive = entity.IsActive
+                });
             }
             catch (Exception ex)
             {
@@ -127,19 +136,39 @@ namespace CFT_Solutions.Web.Controllers
             {
                 if (base._workContext.CurrentUser.DefaultPermissions.Contains(PermissionEnum.UserMaster.ToString()))
                 {
-                    if (!ModelState.IsValid)
+                    List<string> IgnoreProperties = new List<string> { "LoginId", "MobileNo", "Password", "RoleName", "MiddleName" };
+                    var SpecialCharactor = "{,},`,^,>,<";
+
+                    Dictionary<string, string> modelErrors = HtmlEncodeDecodeHelper.ValidateSpecialChars(model, IgnoreProperties, SpecialCharactor);
+
+                    
+                    if (modelErrors.Count > 0)
                     {
-                        PopulateDropdowns(model);
-                        return View(model);
+                        foreach (var item in modelErrors)
+                        {
+                            ModelState.AddModelError(item.Key, item.Value);
+                        }
+
+                        string errorlist = string.Empty;
+                        foreach (var item in ModelState)
+                        {
+                            foreach (var error in item.Value.Errors)
+                            {
+                                errorlist = errorlist + "#" + item.Key + "," + error.ErrorMessage;
+                            }
+                        }
+
+                        return Json(new { Message = "MODELERROR", errorlist });
+
                     }
 
-                    if (ModelState.IsValid)
+                    if (modelErrors.Count==0)
                     {
                         model.CreatedBy = _workContext.CurrentUser.Id;
 
                         // Encode sensitive data before saving
                         UserMasterEntity encodedEntity = (UserMasterEntity)HtmlEncodeDecodeHelper.Encode(model);
-
+                        encodedEntity.EmployeeType = 1;
                         // Call stored procedure to insert/update
                         var result = _userMasterService.InsertAndUpdateUserMaster(encodedEntity);
 

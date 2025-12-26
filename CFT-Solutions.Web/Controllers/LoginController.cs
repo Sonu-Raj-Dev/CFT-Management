@@ -66,15 +66,16 @@ namespace CFT_Solutions.Web.Controllers
                     var user = _userService.ValidateUser(EmailId);
                     if (user == null)
                     {
-                        // invalid user
-                        ModelState.AddModelError(string.Empty, "Invalid credentials");
-                        return View();
+                        return Json(new { success = false, message = "Invalid email or password" });
                     }
 
-                    // If you have to check password, do it here. Example placeholder:
-                    // if (!VerifyPassword(Password, user.PasswordHash)) { ... }
+                    // ⚠️ Plain-text comparison (NOT recommended for production)
+                    bool isValid = string.Equals(user.Password, Password, StringComparison.Ordinal);
+                    if (!isValid)
+                    {
+                        return Json(new { success = false, message = "Invalid email or password" });
+                    }
 
-                    // Create claims - include any claims you need (Name, roles, user id, etc.)
                     var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.EmailID ?? EmailId),

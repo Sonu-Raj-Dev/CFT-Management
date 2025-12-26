@@ -33,7 +33,7 @@ namespace CFT_Solutions.Service.UserMaster
             List<UserMasterEntity> data = new List<UserMasterEntity>();
             try
             {
-                SqlCommand command = new SqlCommand("stpGetUserDetails");
+                SqlCommand command = new SqlCommand("stpGetUserMaster");
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add("@SearchText", SqlDbType.VarChar).Value = SearchText ?? string.Empty;
                 data = _userMasterRepository.GetRecords(command).ToList();
@@ -95,7 +95,7 @@ namespace CFT_Solutions.Service.UserMaster
         {
             try
             {
-                SqlCommand command = new SqlCommand("stpInsertUpdateUserMaster");
+                SqlCommand command = new SqlCommand("stp_InsertUpdateUserMaster");
                 command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.Parameters.Add("@Id", SqlDbType.BigInt).Value = entity.Id;
                 command.Parameters.Add("@FirstName", SqlDbType.VarChar).Value = entity.FirstName ?? string.Empty;
@@ -105,6 +105,7 @@ namespace CFT_Solutions.Service.UserMaster
                 command.Parameters.Add("@Password", SqlDbType.VarChar).Value = entity.Password ?? string.Empty;
                 command.Parameters.Add("@IsActive", SqlDbType.Bit).Value = entity.IsActive;
                 command.Parameters.Add("@CreatedBy", SqlDbType.BigInt).Value = entity.CreatedBy;
+                command.Parameters.Add("@EmployeeTypeId", SqlDbType.BigInt).Value = entity.EmployeeType;
 
                 var data = _userMasterRepository.ExecuteProc(command);
                 return data;
