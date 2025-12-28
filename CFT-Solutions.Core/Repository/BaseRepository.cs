@@ -30,10 +30,10 @@ namespace CFT_Solutions.Core.Repository
             string database = _iConfig.GetSection("ConnectionStrings:Database").Value;
             string userName = _iConfig.GetSection("ConnectionStrings:UserName").Value;
             string password = _iConfig.GetSection("ConnectionStrings:Password").Value;
-            //string connectionString = $"server={dataSource};database={database};user={userName};password={password};";
+            string connectionString = $"server={dataSource};database={database};user={userName};password={password};";
 
-            string connectionString =
-       $"Server={dataSource};Database={database};Trusted_Connection=True;MultipleActiveResultSets=True;";
+       //     string connectionString =
+       //$"Server={dataSource};Database={database};Trusted_Connection=True;MultipleActiveResultSets=True;";
             _connection = new SqlConnection(connectionString);
           
         }
