@@ -75,6 +75,16 @@ namespace CFT_Solutions.Web.Controllers
                     {
                         return Json(new { success = false, message = "Invalid email or password" });
                     }
+                    if (Password == "abc@123")
+                    {
+                        return Json(new
+                        {
+                            success = true,
+                            forceReset = true,
+                            email = EmailId,
+                            message = "Please reset your password"
+                        });
+                    }
 
                     var claims = new List<Claim>
                 {
@@ -200,5 +210,37 @@ namespace CFT_Solutions.Web.Controllers
             // reuse POST logic
             return await Logout();
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ResetPassword(string EmailId, string Password)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(EmailId) || string.IsNullOrEmpty(Password))
+                {
+                    return Json(new { success = false, message = "Email and password are required" });
+                }
+
+                var currentUserId = _workContext?.CurrentUser?.Id ?? 0;
+
+                var result = _userService.ResetPassword(EmailId, Password, currentUserId);
+               
+                return Json(new
+                {
+                    success = true,
+                    message = "Password reset successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                // log error here
+                return Json(new
+                {
+                    success = false,
+                    message = "Something went wrong while resetting password"
+                });
+            }
+        }
+
     }
 }

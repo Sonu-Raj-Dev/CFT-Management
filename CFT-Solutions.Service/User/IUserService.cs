@@ -11,5 +11,6 @@ namespace CFT_Solutions.Service.User
     {
         UserEntity ValidateUser(string EmailID);
         UserEntity GetUserByLoginId(string LoginId);
+        object ResetPassword(string EmailId, string Password, Int64 CreatedBy);
     }
 }

@@ -49,6 +49,8 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             overflow: hidden;
             animation: slideUp 0.5s ease-out;
+            position: relative;
+            z-index: 1;
         }
 
         @@keyframes slideUp {
@@ -56,6 +58,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -132,9 +135,9 @@
             color: #c0392b;
         }
 
-        .alert-danger i {
-            color: #e74c3c;
-        }
+            .alert-danger i {
+                color: #e74c3c;
+            }
 
         .form-group {
             margin-bottom: 20px;
@@ -159,15 +162,21 @@
             border-radius: 6px;
             font-size: 14px;
             transition: all 0.3s;
-            background-color: var(--gray-light);
+            background-color: var(--white);
+            color: var(--gray-dark);
         }
 
-        .form-control:focus {
-            outline: none;
-            border-color: var(--secondary-blue);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-            background-color: var(--white);
-        }
+            .form-control:focus {
+                outline: none;
+                border-color: var(--secondary-blue);
+                box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+                background-color: var(--white);
+            }
+
+            .form-control:disabled {
+                background-color: var(--gray-light);
+                cursor: not-allowed;
+            }
 
         .input-icon {
             position: absolute;
@@ -176,6 +185,7 @@
             transform: translateY(-50%);
             color: var(--gray-medium);
             font-size: 16px;
+            pointer-events: none;
         }
 
         .password-toggle {
@@ -188,6 +198,12 @@
             color: var(--gray-medium);
             cursor: pointer;
             font-size: 16px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
         }
 
         .form-options {
@@ -203,17 +219,25 @@
             align-items: center;
             gap: 8px;
             color: var(--gray-dark);
+            cursor: pointer;
         }
+
+            .remember-me input[type="checkbox"] {
+                width: 16px;
+                height: 16px;
+                cursor: pointer;
+            }
 
         .forgot-password {
             color: var(--secondary-blue);
             text-decoration: none;
             font-weight: 500;
+            cursor: pointer;
         }
 
-        .forgot-password:hover {
-            text-decoration: underline;
-        }
+            .forgot-password:hover {
+                text-decoration: underline;
+            }
 
         .btn-login {
             width: 100%;
@@ -232,15 +256,20 @@
             gap: 10px;
         }
 
-        .btn-login:hover {
-            background: linear-gradient(135deg, #2980b9 0%, #1c5985 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
-        }
+            .btn-login:hover:not(:disabled) {
+                background: linear-gradient(135deg, #2980b9 0%, #1c5985 100%);
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+            }
 
-        .btn-login:active {
-            transform: translateY(0);
-        }
+            .btn-login:active:not(:disabled) {
+                transform: translateY(0);
+            }
+
+            .btn-login:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
 
         .divider {
             display: flex;
@@ -250,12 +279,12 @@
             font-size: 14px;
         }
 
-        .divider::before, .divider::after {
-            content: "";
-            flex: 1;
-            border-bottom: 1px solid var(--border-color);
-            margin: 0 15px;
-        }
+            .divider::before, .divider::after {
+                content: "";
+                flex: 1;
+                border-bottom: 1px solid var(--border-color);
+                margin: 0 15px;
+            }
 
         .social-login {
             display: flex;
@@ -279,30 +308,30 @@
             font-size: 18px;
         }
 
-        .social-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-color: var(--secondary-blue);
-            color: var(--secondary-blue);
-        }
+            .social-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                border-color: var(--secondary-blue);
+                color: var(--secondary-blue);
+            }
 
-        .social-btn.google:hover {
-            background-color: #db4437;
-            color: white;
-            border-color: #db4437;
-        }
+            .social-btn.google:hover {
+                background-color: #db4437;
+                color: white;
+                border-color: #db4437;
+            }
 
-        .social-btn.facebook:hover {
-            background-color: #4267B2;
-            color: white;
-            border-color: #4267B2;
-        }
+            .social-btn.facebook:hover {
+                background-color: #4267B2;
+                color: white;
+                border-color: #4267B2;
+            }
 
-        .social-btn.microsoft:hover {
-            background-color: #00a4ef;
-            color: white;
-            border-color: #00a4ef;
-        }
+            .social-btn.microsoft:hover {
+                background-color: #00a4ef;
+                color: white;
+                border-color: #00a4ef;
+            }
 
         .login-footer {
             text-align: center;
@@ -312,33 +341,33 @@
             font-size: 14px;
         }
 
-        .login-footer a {
-            color: var(--secondary-blue);
-            text-decoration: none;
-            font-weight: 500;
-        }
+            .login-footer a {
+                color: var(--secondary-blue);
+                text-decoration: none;
+                font-weight: 500;
+            }
 
-        .login-footer a:hover {
-            text-decoration: underline;
-        }
+                .login-footer a:hover {
+                    text-decoration: underline;
+                }
 
         @@media (max-width: 480px) {
             .login-container {
                 max-width: 100%;
             }
-            
+
             .login-body {
                 padding: 20px;
             }
-            
+
             .system-title {
                 font-size: 18px;
             }
-            
+
             .social-login {
                 gap: 10px;
             }
-            
+
             .social-btn {
                 width: 44px;
                 height: 44px;
@@ -351,18 +380,20 @@
             cursor: not-allowed;
         }
 
-        .btn-loading .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s linear infinite;
-        }
+            .btn-loading .spinner {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border: 2px solid rgba(255,255,255,0.3);
+                border-radius: 50%;
+                border-top-color: white;
+                animation: spin 1s linear infinite;
+            }
 
         @@keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .error-message {
@@ -378,6 +409,203 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1050;
+            overflow: hidden;
+        }
+
+            .modal.show {
+                display: block;
+            }
+
+        .modal-dialog {
+            position: relative;
+            width: auto;
+            margin: 0.5rem;
+            max-width: 400px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .modal-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            pointer-events: auto;
+            background-color: var(--white);
+            background-clip: padding-box;
+            border: 1px solid rgba(0, 0, 0, .2);
+            border-radius: 12px;
+            outline: 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--white);
+            cursor: pointer;
+            opacity: 0.8;
+            line-height: 1;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .btn-close:hover {
+                opacity: 1;
+            }
+
+        .modal-body {
+            position: relative;
+            flex: 1 1 auto;
+            padding: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Modal Backdrop */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* z-index: 1040; */
+            opacity: 0;
+            transition: opacity 0.15s linear;
+        }
+
+            .modal-backdrop.show {
+                opacity: 1;
+            }
+
+        /* Button Styles */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary {
+            background-color: var(--gray-light);
+            color: var(--gray-dark);
+        }
+
+            .btn-secondary:hover {
+                background-color: #e2e6ea;
+            }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+            .btn-primary:hover:not(:disabled) {
+                background: linear-gradient(135deg, #2980b9 0%, #1c5985 100%);
+            }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .alert-danger {
+            background-color: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            color: #c0392b;
+        }
+
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+            color: #218838;
+        }
+
+        .d-none {
+            display: none !important;
+        }
+
+        .text-muted {
+            color: var(--gray-medium) !important;
+            font-size: 12px;
+            margin-top: 5px;
+            display: block;
+        }
+
+        /* Utility Classes */
+        .mb-3 {
+            margin-bottom: 1rem !important;
+        }
+
+        /* Ensure inputs are editable */
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        input:focus,
+        button:focus {
+            outline: none;
+        }
+
+        /* Make sure form is accessible */
+        .form-control:read-only {
+            background-color: var(--gray-light);
         }
     </style>
 </head>
@@ -414,12 +642,13 @@
                     <label for="email" class="form-label">Email Address</label>
                     <div class="input-with-icon">
                         <i class="fas fa-envelope input-icon"></i>
-                        <input type="email" 
-                               id="email" 
-                               name="Email" 
-                               class="form-control" 
-                               placeholder="Enter your email address" 
-                               required>
+                        <input type="email"
+                               id="email"
+                               name="Email"
+                               class="form-control"
+                               placeholder="Enter your email address"
+                               required
+                               autocomplete="email">
                     </div>
                 </div>
 
@@ -427,25 +656,26 @@
                     <label for="password" class="form-label">Password</label>
                     <div class="input-with-icon">
                         <i class="fas fa-lock input-icon"></i>
-                        <input type="password" 
-                               id="password" 
-                               name="Password" 
-                               class="form-control" 
-                               placeholder="Enter your password" 
-                               required>
+                        <input type="password"
+                               id="password"
+                               name="Password"
+                               class="form-control"
+                               placeholder="Enter your password"
+                               required
+                               autocomplete="current-password">
                         <button type="button" class="password-toggle" id="togglePassword">
                             <i class="fas fa-eye"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="form-options">
+               @*  <div class="form-options">
                     <label class="remember-me">
                         <input type="checkbox" name="RememberMe" value="true">
                         Remember me
                     </label>
-                    <a href="#" class="forgot-password">Forgot password?</a>
-                </div>
+                    <a href="#" class="forgot-password" id="forgotPassword">Forgot password?</a>
+                </div> *@
 
                 <button type="submit" class="btn-login" id="loginButton">
                     <i class="fas fa-sign-in-alt"></i>
@@ -453,7 +683,7 @@
                 </button>
             </form>
 
-            <div class="divider">Or continue with</div>
+            @* <div class="divider">Or continue with</div>
 
             <div class="social-login">
                 <div class="social-btn google" title="Sign in with Google">
@@ -465,65 +695,54 @@
                 <div class="social-btn microsoft" title="Sign in with Microsoft">
                     <i class="fab fa-microsoft"></i>
                 </div>
-            </div>
+            </div> *@
 
-            <div class="login-footer">
+            @* <div class="login-footer">
                 <p>Don't have an account? <a href="#">Contact administrator</a></p>
                 <p style="margin-top: 8px; font-size: 12px; color: var(--gray-medium);">
                     &copy; 2025 CFT Complaint Management System. All rights reserved.
                 </p>
+            </div> *@
+        </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div id="resetPasswordModal" class="modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reset Password</h5>
+                    <button type="button" class="btn-close" onclick="closeResetModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" id="resetEmail" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">New Password</label>
+                        <input type="password" id="newPassword" class="form-control" placeholder="Enter new password">
+                        <small class="text-muted">Password must be at least 8 characters long</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm new password">
+                    </div>
+                    <div class="alert alert-danger d-none" id="resetError"></div>
+                    <div class="alert alert-success d-none" id="resetSuccess"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeResetModal()">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="resetPassword()">Update Password</button>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal Backdrop -->
+    <div class="modal-backdrop fade" id="modalBackdrop"></div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/Custom/Login/Login.js"></script>
-    <script>
-        $(document).ready(function() {
-            // Password toggle
-            $('#togglePassword').click(function() {
-                const passwordInput = $('#password');
-                const icon = $(this).find('i');
-                
-                if (passwordInput.attr('type') === 'password') {
-                    passwordInput.attr('type', 'text');
-                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
-                } else {
-                    passwordInput.attr('type', 'password');
-                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
-                }
-            });
-
-            // Form submission loading state
-            // $('#loginForm').submit(function() {
-            //     const button = $('#loginButton');
-            //     button.addClass('btn-loading');
-            //     button.find('span').text('Signing in...');
-            //     button.find('i').removeClass('fa-sign-in-alt').addClass('spinner');
-            //     button.prop('disabled', true);
-            // });
-
-            // Form validation
-            $('#email').on('blur', function() {
-                const email = $(this).val();
-                const emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
-                
-                if (email && !emailRegex.test(email)) {
-                    $(this).css('border-color', 'var(--danger)');
-                    $(this).css('box-shadow', '0 0 0 3px rgba(231, 76, 60, 0.1)');
-                } else {
-                    $(this).css('border-color', '');
-                    $(this).css('box-shadow', '');
-                }
-            });
-
-            // Focus effects
-            $('.form-control').focus(function() {
-                $(this).parent().addClass('focused');
-            }).blur(function() {
-                $(this).parent().removeClass('focused');
-            });
-        });
-    </script>
+    <script src="~/custom/login/login.js"></script>
 </body>
 </html>

@@ -10,5 +10,8 @@ namespace CFT_Solutions.Core.Enum
     {
         DashBoard = 1,
         UserMaster=2,
+        EngineerMaster=3,
+        CustomerMaster=4,
+        ComplaintMaster=5
     }
 }

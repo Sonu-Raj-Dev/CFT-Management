@@ -29,6 +29,7 @@ namespace CFT_Solutions.Core
         public Int64 CurrentUserRoleID { get; set; }
 
         public string? EncryptedParam { get; set; }
+        public string Name { get; set; }
 
         #endregion
     }

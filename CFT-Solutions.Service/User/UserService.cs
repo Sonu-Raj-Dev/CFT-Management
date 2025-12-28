@@ -2,6 +2,7 @@
 using CFT_Solutions.Core.Entity.PermissionRecord;
 using CFT_Solutions.Core.Entity.Role;
 using CFT_Solutions.Core.Entity.User;
+using CFT_Solutions.Core.Entity.UserMaster;
 using CFT_Solutions.Core.Helper;
 using CFT_Solutions.Core.Repository;
 using System;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace CFT_Solutions.Service.User
 {
-    public class UserService:IUserService
+    public class UserService : IUserService
     {
         #region Fields
 
@@ -22,7 +23,7 @@ namespace CFT_Solutions.Service.User
         private readonly IRepository<RoleEntity> _userRoleRepository;
         private readonly IRepository<PermissionRecordEntity> _permissionRecordRepository;
 
-  
+
         #endregion
 
         #region Constructor
@@ -30,13 +31,13 @@ namespace CFT_Solutions.Service.User
             IRepository<UserEntity> userRepository,
             IRepository<RoleEntity> userRoleRepository,
             IRepository<PermissionRecordEntity> permissionRecordRepository
-          
+
         )
         {
             _userRepository = userRepository;
             _userRoleRepository = userRoleRepository;
             _permissionRecordRepository = permissionRecordRepository;
-           
+
         }
 
         #endregion
@@ -86,8 +87,8 @@ namespace CFT_Solutions.Service.User
                         command2.Parameters.Add("@RoleId", SqlDbType.BigInt).Value = Role[0].RoleId;
                         // user.PermissionRecords = _permissionRecordRepository.GetRecords(command2).ToList();
                         Role[0]._permissionRecords = _permissionRecordRepository.GetRecords(command2).ToList();
-                        user.DefaultPermissions = Role[0]._permissionRecords.Select(k => k.SystemName).ToList();                       
-                    }                                
+                        user.DefaultPermissions = Role[0]._permissionRecords.Select(k => k.SystemName).ToList();
+                    }
                 }
                 else
                 {
@@ -107,7 +108,31 @@ namespace CFT_Solutions.Service.User
 
             return user;
         }
-        #endregion
+        public object ResetPassword(string EmailId,string Password,Int64 CreatedBy)
+        {
+            try
+            {
+                SqlCommand command = new SqlCommand("stp_ResetPassword");
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.Add("@EmailId", SqlDbType.VarChar).Value = EmailId;
+                command.Parameters.Add("@Password", SqlDbType.VarChar).Value = Password;
+                command.Parameters.Add("@CreatedBy", SqlDbType.BigInt).Value = CreatedBy;
+               
 
+                var data = _userRepository.ExecuteProc(command);
+                return data;
+            }
+            catch (Exception ex)
+            {
+                ErrorLogEntity error = new ErrorLogEntity();
+                error.ControllerName = "UserMasterService";
+                error.ActionName = "ResetPassword";
+                error.Exception = ex.Message;
+                error.StackTrace = ex.StackTrace;
+                LogHelper.LogError(error);
+                throw;
+            }
+        }
+        #endregion
     }
 }

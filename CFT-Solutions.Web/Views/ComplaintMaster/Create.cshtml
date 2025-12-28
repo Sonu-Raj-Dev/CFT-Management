@@ -1,0 +1,304 @@
+﻿@model CFT_Solutions.Core.Entity.ComplaintMaster.ComplaintMasterEntity
+@{
+    // Get IsView from ViewBag (default to false if not set)
+    bool isViewMode = ViewBag.IsView ?? false;
+    // Determine if form should be editable
+    bool isEditable = Model.StatusId == 1 && !isViewMode;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@(isViewMode ? "View Complaint" : "Submit Complaint")</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        .form-control[readonly], .form-control:disabled {
+            background-color: #f8f9fa;
+            opacity: 1;
+        }
+        .view-mode-label {
+            font-weight: bold;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="mb-4">@(isViewMode ? "View Complaint" : "Submit Complaint")</h2>
+        
+        @if (isViewMode)
+        {
+            <div class="alert alert-info">
+                <i class="fas fa-eye"></i> You are in view-only mode. All fields are read-only.
+            </div>
+        }
+
+        <div id="complaintForm">
+            @Html.HiddenFor(x => x.Id)
+            <!-- Hidden fields for disabled data -->
+            @Html.HiddenFor(x => x.CustomerName)
+            @Html.HiddenFor(x => x.MobileNumber)
+            @Html.HiddenFor(x => x.CustomerEmail)
+            @Html.HiddenFor(x => x.Address)
+            @Html.HiddenFor(x => x.StatusId)
+            <input type="hidden" id="complaintId" value="@Model.Id" />
+            <input type="hidden" id="currentStatusId" value="@Model.StatusId" />
+            <input type="hidden" id="isViewMode" value="@isViewMode.ToString().ToLower()" />
+           
+            <!-- Row 1 -->
+            <div class="row">
+                <!-- Customer -->
+                <div class="col-md-3 form-group">
+                    <label>Select Customer <span class="text-danger">*</span></label>
+                    
+                    @if (isEditable)
+                    {
+                        @Html.DropDownListFor(x => x.CustomerId, 
+                            new SelectList(Model.CustomersList, "Id", "Name", Model.CustomerId),
+                            "Select Customer",
+                            new { @class = "form-control", id = "customerid", required = "required" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(x => x.CustomerId, 
+                            new SelectList(Model.CustomersList, "Id", "Name", Model.CustomerId),
+                            "Select Customer",
+                            new { @class = "form-control", id = "customerid", disabled = "disabled", required = "required" })
+                        
+                        @Html.HiddenFor(x => x.CustomerId)
+                    }
+                    
+                    @Html.ValidationMessageFor(x => x.CustomerId, "", new { @class = "text-danger" })
+                </div>
+
+                <!-- Customer Name -->
+                <div class="col-md-3 form-group">
+                    <label>Customer Name</label>
+                    @Html.TextBoxFor(x => x.CustomerName,
+                    new { 
+                        @class = "form-control", 
+                        id = "txtCustomerName", 
+                        @readonly = "readonly",
+                        placeholder = "Select customer to populate"
+                    })
+                </div>
+
+                <!-- Mobile -->
+                <div class="col-md-3 form-group">
+                    <label>Mobile Number</label>
+                    @Html.TextBoxFor(x => x.MobileNumber,
+                    new { 
+                        @class = "form-control", 
+                        id = "txtMobileNumber", 
+                        @readonly = "readonly",
+                        placeholder = "Select customer to populate"
+                    })
+                </div>
+
+                <!-- Email -->
+                <div class="col-md-3 form-group">
+                    <label>Email</label>
+                    @Html.TextBoxFor(x => x.CustomerEmail,
+                    new { 
+                        @class = "form-control", 
+                        type = "email", 
+                        id = "txtEmail", 
+                        @readonly = "readonly",
+                        placeholder = "Select customer to populate"
+                    })
+                </div>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="row">
+                <!-- Nature Of Complaint -->
+                <div class="col-md-3 form-group">
+                    <label>Nature Of Complaint <span class="text-danger">*</span></label>
+                    
+                    @if (isEditable)
+                    {
+                        <select name="NatureOfComplaintId" class="form-control" id="natureofcomplaint" required>
+                            <option value="">Select Nature</option>
+                            @foreach (var item in Model.NatureOfComplaintsList)
+                            {
+                                <option value="@item.Id" selected="@(item.Id == Model.NatureOfComplaintId)">@item.Name</option>
+                            }
+                        </select>
+                    }
+                    else
+                    {
+                        <select name="NatureOfComplaintId" class="form-control" id="natureofcomplaint" disabled required>
+                            <option value="">Select Nature</option>
+                            @foreach (var item in Model.NatureOfComplaintsList)
+                            {
+                                <option value="@item.Id" selected="@(item.Id == Model.NatureOfComplaintId)">@item.Name</option>
+                            }
+                        </select>
+                        <input type="hidden" name="NatureOfComplaintId" value="@Model.NatureOfComplaintId" />
+                    }
+                    
+                    @Html.ValidationMessageFor(x => x.NatureOfComplaintId, "", new { @class = "text-danger" })
+                </div>
+                
+                <!-- Address -->
+                <div class="col-md-6 form-group">
+                    <label>Address</label>
+                    @Html.TextBoxFor(x => x.Address,
+                    new { 
+                        @class = "form-control", 
+                        id = "txtAddress", 
+                        @readonly = "readonly",
+                        placeholder = "Select customer to populate"
+                    })
+                </div>
+
+                <!-- Assign Engineer -->
+                <div class="col-md-3 form-group">
+                    <label>Assign Engineer<span class="text-danger">*</span></label>
+                    
+                    @if (isEditable)
+                    {
+                        <select name="EngineerId" class="form-control" id="engineerid" required>
+                            <option value="">Select Engineer</option>
+                            @foreach (var item in Model.EngineerList)
+                            {
+                                <option value="@item.Id" selected="@(item.Id == Model.EngineerId)">@item.Name</option>
+                            }
+                        </select>
+                    }
+                    else
+                    {
+                        <select name="EngineerId" class="form-control" id="engineerid" disabled required>
+                            <option value="">Select Engineer</option>
+                            @foreach (var item in Model.EngineerList)
+                            {
+                                <option value="@item.Id" selected="@(item.Id == Model.EngineerId)">@item.Name</option>
+                            }
+                        </select>
+                        <input type="hidden" name="EngineerId" value="@Model.EngineerId" />
+                    }
+                    
+                    @Html.ValidationMessageFor(x => x.EngineerId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <!-- Complaint Details -->
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    <label>Complaint Details <span class="text-danger">*</span></label>
+                    
+                    @if (isEditable)
+                    {
+                        @Html.TextAreaFor(x => x.ComplaintDetails, 4, 100,
+                            new { @class = "form-control", id = "complaintdetails", required = "required" })
+                    }
+                    else
+                    {
+                        @Html.TextAreaFor(x => x.ComplaintDetails, 4, 100,
+                            new { @class = "form-control bg-light", id = "complaintdetails", @readonly = "readonly", required = "required" })
+                    }
+                    
+                    @Html.ValidationMessageFor(x => x.ComplaintDetails, "", new { @class = "text-danger" })
+                </div>
+            </div>
+           
+            <!-- Status Field - Show only when NOT draft AND NOT in view mode -->
+            @if (Model.StatusId != 1 && !isViewMode)
+            {
+                <div class="row">
+                    <div class="col-md-3 form-group">
+                        <label>Select Status <span class="text-danger">*</span></label>
+                        
+                        @Html.DropDownListFor(x => x.StatusId, 
+                            new SelectList(Model.StatusList, "Id", "Name", Model.StatusId),
+                            "Select Status",
+                            new { @class = "form-control", id = "statusid", required = "required" })
+                        
+                        @Html.ValidationMessageFor(x => x.StatusId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            }
+            else if (Model.StatusId != 1 && isViewMode)
+            {
+                <!-- Display status as text in view mode -->
+                <div class="row">
+                    <div class="col-md-3 form-group">
+                        <label class="view-mode-label">Current Status</label>
+                        <div class="form-control bg-light">
+                            @{
+                                var currentStatus = Model.StatusList?.FirstOrDefault(s => s.Id == Model.StatusId);
+                                var statusName = currentStatus?.Name ?? "Unknown";
+                            }
+                            @statusName
+                        </div>
+                        @Html.HiddenFor(x => x.StatusId)
+                    </div>
+                </div>
+            }
+
+            <!-- Buttons -->
+            <div class="form-group mt-4">
+                <a href="@Url.Action("Index", "ComplaintMaster")" class="btn btn-secondary mt-2">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+                
+                @if (!isViewMode)
+                {
+                    if (Model.StatusId == 1)
+                    {
+                        <button type="button" id="btnSaveDraft" class="btn btn-warning mt-2">
+                            <i class="fas fa-save"></i> Save Draft
+                        </button>
+                        
+                        <button type="button" id="btnSubmit" class="btn btn-primary mt-2">
+                            <i class="fas fa-paper-plane"></i> Submit Complaint
+                        </button>
+                    }
+                    else if (Model.StatusId != 1)
+                    {
+                        <button type="button" id="btnUpdateStatus" class="btn btn-success mt-2">
+                            <i class="fas fa-sync-alt"></i> Update Status
+                        </button>
+                    }
+                }
+                else
+                {
+                    @* <!-- View mode buttons -->
+                    <button type="button" class="btn btn-info mt-2" onclick="window.print()">
+                        <i class="fas fa-print"></i> Print
+                    </button> *@
+                    
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a href="@Url.Action("Create", "ComplaintMaster", new { Id = Model.Id })" class="btn btn-warning mt-2">
+                            <i class="fas fa-edit"></i> Edit Complaint
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Check if we're in view mode
+        var isViewMode = $('#isViewMode').val() === 'true';
+        
+        // Disable form submission in view mode
+        if (isViewMode) {
+            $(document).ready(function() {
+                // Disable all form elements
+                $('#complaintForm input, #complaintForm select, #complaintForm textarea, #complaintForm button')
+                    .not('.btn-secondary, .btn-info, .btn-warning') // Keep navigation buttons enabled
+                    .prop('disabled', true)
+                    .addClass('bg-light');
+            });
+        }
+    </script>
+    
+    <!-- Load your external JS file -->
+    <script src="~/custom/complaintmaster/complaintmaster.js"></script>
+</body>
+</html>

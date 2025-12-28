@@ -6,7 +6,7 @@ namespace CFT_Solutions.Service.UserMaster
 {
     public interface IUserMasterService
     {
-        List<UserMasterEntity> GetUserMasterDashBoardData(string SearchText);
+        List<UserMasterEntity> GetUserMasterDashBoardData(string SearchText, Int64 MasterTypeId);
 
         UserMasterEntity GetUserMasterByUserId(Int64 Id);
         List<RoleEntity> GetRoles();

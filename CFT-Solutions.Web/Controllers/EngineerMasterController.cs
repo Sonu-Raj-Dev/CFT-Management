@@ -1,5 +1,4 @@
-﻿using AngleSharp.Dom;
-using CFT_Solutions.Core;
+﻿using CFT_Solutions.Core;
 using CFT_Solutions.Core.Entity.UserMaster;
 using CFT_Solutions.Core.Enum;
 using CFT_Solutions.Core.Helper;
@@ -7,16 +6,12 @@ using CFT_Solutions.Service.Security;
 using CFT_Solutions.Service.User;
 using CFT_Solutions.Service.UserMaster;
 using CFT_Solutions.Web.Helper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CFT_Solutions.Web.Controllers
 {
-    public class UserMasterController : BaseController
+    public class EngineerMasterController : BaseController
     {
         #region Fields
         private readonly IUserMasterService _userMasterService;
@@ -25,7 +20,7 @@ namespace CFT_Solutions.Web.Controllers
         #endregion
 
         #region Constructor
-        public UserMasterController(IUserMasterService userMasterService, IEncryptionService encryptionService, IUserService userService, IWorkContext workContextRepository, IHttpContextAccessor httpContextAccessor) : base(workContextRepository, httpContextAccessor, userService)
+        public EngineerMasterController(IUserMasterService userMasterService, IEncryptionService encryptionService, IUserService userService, IWorkContext workContextRepository, IHttpContextAccessor httpContextAccessor) : base(workContextRepository, httpContextAccessor, userService)
         {
             _userMasterService = userMasterService;
             _encryptionService = encryptionService ?? throw new ArgumentNullException(nameof(encryptionService));
@@ -59,7 +54,7 @@ namespace CFT_Solutions.Web.Controllers
         {
             try
             {
-                var MasterTypeId = 2;
+                var MasterTypeId = 2;  
                 var data = _userMasterService.GetUserMasterDashBoardData(searchtext, MasterTypeId);
                 if (data != null)
                 {
@@ -135,14 +130,14 @@ namespace CFT_Solutions.Web.Controllers
         {
             try
             {
-                if (base._workContext.CurrentUser.DefaultPermissions.Contains(PermissionEnum.UserMaster.ToString()))
+                if (base._workContext.CurrentUser.DefaultPermissions.Contains(PermissionEnum.EngineerMaster.ToString()))
                 {
                     List<string> IgnoreProperties = new List<string> { "LoginId", "MobileNo", "Password", "RoleName", "MiddleName" };
                     var SpecialCharactor = "{,},`,^,>,<";
 
                     Dictionary<string, string> modelErrors = HtmlEncodeDecodeHelper.ValidateSpecialChars(model, IgnoreProperties, SpecialCharactor);
 
-                    
+
                     if (modelErrors.Count > 0)
                     {
                         foreach (var item in modelErrors)
@@ -163,13 +158,13 @@ namespace CFT_Solutions.Web.Controllers
 
                     }
 
-                    if (modelErrors.Count==0)
+                    if (modelErrors.Count == 0)
                     {
                         model.CreatedBy = _workContext.CurrentUser.Id;
 
                         // Encode sensitive data before saving
                         UserMasterEntity encodedEntity = (UserMasterEntity)HtmlEncodeDecodeHelper.Encode(model);
-                        encodedEntity.EmployeeType = 1;
+                        encodedEntity.EmployeeType = 2;
                         // Call stored procedure to insert/update
                         var result = _userMasterService.InsertAndUpdateUserMaster(encodedEntity);
 

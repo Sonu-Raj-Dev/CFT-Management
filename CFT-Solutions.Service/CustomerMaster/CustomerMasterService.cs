@@ -1,5 +1,5 @@
-﻿
-using CFT_Solutions.Core.Entity.Common;
+﻿using CFT_Solutions.Core.Entity.Common;
+using CFT_Solutions.Core.Entity.CustomerMaster;
 using CFT_Solutions.Core.Entity.Role;
 using CFT_Solutions.Core.Entity.UserMaster;
 using CFT_Solutions.Core.Helper;
@@ -9,18 +9,20 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace CFT_Solutions.Service.UserMaster
+namespace CFT_Solutions.Service.CustomerMaster
 {
-    public class UserMasterService : IUserMasterService
+    public class CustomerMasterService:ICustomerMasterService
     {
         #region Fields
-        private readonly IRepository<UserMasterEntity> _userMasterRepository;
+        private readonly IRepository<CustomerMasterEntity> _userMasterRepository;
         private readonly IRepository<RoleEntity> _roleRepository;
         #endregion
 
         #region Constructor
-        public UserMasterService(IRepository<UserMasterEntity> userRepository, IRepository<RoleEntity> roleRepository)
+        public CustomerMasterService(IRepository<CustomerMasterEntity> userRepository, IRepository<RoleEntity> roleRepository)
         {
             _userMasterRepository = userRepository;
             _roleRepository = roleRepository;
@@ -28,15 +30,14 @@ namespace CFT_Solutions.Service.UserMaster
         #endregion
 
         #region Methods
-        public List<UserMasterEntity> GetUserMasterDashBoardData(string SearchText,Int64 MasterTypeId)
+        public List<CustomerMasterEntity> GetCustomerMasterDashBoardData(string SearchText)
         {
-            List<UserMasterEntity> data = new List<UserMasterEntity>();
+            List<CustomerMasterEntity> data = new List<CustomerMasterEntity>();
             try
             {
-                SqlCommand command = new SqlCommand("stpGetUserMaster");
+                SqlCommand command = new SqlCommand("stpGetCustomerMaster");
                 command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.Add("@SearchText", SqlDbType.VarChar).Value = SearchText ?? string.Empty;
-                command.Parameters.Add("@MasterTypeId", SqlDbType.BigInt).Value = MasterTypeId;
+                command.Parameters.Add("@SearchText", SqlDbType.VarChar).Value = SearchText ?? string.Empty;        
 
                 data = _userMasterRepository.GetRecords(command).ToList();
             }
@@ -46,12 +47,12 @@ namespace CFT_Solutions.Service.UserMaster
             }
             return data;
         }
-        public UserMasterEntity GetUserMasterByUserId(Int64 Id)
+        public CustomerMasterEntity GetCustomerMasterByUserId(Int64 Id)
         {
-            UserMasterEntity data = new UserMasterEntity();
+            CustomerMasterEntity data = new CustomerMasterEntity();
             try
             {
-                SqlCommand command = new SqlCommand("stp_GetUserMasterById");
+                SqlCommand command = new SqlCommand("stp_GetCustomerMasterById");
                 command.CommandType = CommandType.StoredProcedure;
                 command.Parameters.Add("@Id", SqlDbType.BigInt).Value = Id;
                 data = _userMasterRepository.GetRecord(command);
@@ -62,53 +63,22 @@ namespace CFT_Solutions.Service.UserMaster
             }
             return data;
         }
-        public List<RoleEntity> GetRoles()
-        {
-            List<RoleEntity> data = new List<RoleEntity>();
-            try
-            {
-                SqlCommand command = new SqlCommand("stp_GetRoles");
-                command.CommandType = CommandType.StoredProcedure;
-                data = _roleRepository.GetRecords(command).ToList();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return data;
-        }
-        public List<UserMasterEntity> GetUsersByRoleId(Int64 RoleId)
-        {
-            List<UserMasterEntity> data = new List<UserMasterEntity>();
-            try
-            {
-                SqlCommand command = new SqlCommand("stp_GetUserByRoleId");
-                command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.Add("@RoleId", SqlDbType.BigInt).Value = RoleId;
-                data = _userMasterRepository.GetRecords(command).ToList();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            return data;
-        }
-        public object InsertAndUpdateUserMaster(UserMasterEntity entity)
+      
+        public object InsertAndUpdateCustomerMaster(CustomerMasterEntity entity)
         {
             try
             {
-                SqlCommand command = new SqlCommand("stp_InsertUpdateUserMaster");
+                SqlCommand command = new SqlCommand("stp_InsertUpdateCustomerMaster");
                 command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.Parameters.Add("@Id", SqlDbType.BigInt).Value = entity.Id;
                 command.Parameters.Add("@FirstName", SqlDbType.VarChar).Value = entity.FirstName ?? string.Empty;
                 command.Parameters.Add("@LastName", SqlDbType.VarChar).Value = entity.LastName ?? string.Empty;
                 command.Parameters.Add("@EmailId", SqlDbType.VarChar).Value = entity.EmailId ?? string.Empty;
                 command.Parameters.Add("@MobileNo", SqlDbType.VarChar).Value = entity.MobileNo ?? string.Empty;
-                command.Parameters.Add("@Password", SqlDbType.VarChar).Value = entity.Password ?? string.Empty;
+                command.Parameters.Add("@Address", SqlDbType.VarChar).Value = entity.Address;
                 command.Parameters.Add("@IsActive", SqlDbType.Bit).Value = entity.IsActive;
                 command.Parameters.Add("@CreatedBy", SqlDbType.BigInt).Value = entity.CreatedBy;
-                command.Parameters.Add("@EmployeeTypeId", SqlDbType.BigInt).Value = entity.EmployeeType;
-
+              
                 var data = _userMasterRepository.ExecuteProc(command);
                 return data;
             }
@@ -123,6 +93,7 @@ namespace CFT_Solutions.Service.UserMaster
                 throw;
             }
         }
+       
         #endregion
     }
 }

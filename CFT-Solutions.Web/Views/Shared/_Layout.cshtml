@@ -10,11 +10,13 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link href="~/css/site.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
     <style>
         :root {
             --header-height: 50px;
             --footer-height: 48px;
             --sidebar-width: 250px;
+            --sidebar-collapsed-width: 70px;
             --primary-blue: #2c3e50;
             --secondary-blue: #3498db;
             --light-blue: #ecf0f1;
@@ -23,6 +25,9 @@
             --text-light: #7f8c8d;
             --hover-bg: #f8f9fa;
             --active-bg: #e8f4fc;
+            --sidebar-bg: #2c3e50;
+            --sidebar-dark: #1a252f;
+            --sidebar-text: #bdc3c7;
         }
 
         /* Reset & Base */
@@ -37,6 +42,7 @@
             font-size: 14px;
             color: var(--text-dark);
             background-color: #f5f7fa;
+            overflow-x: hidden;
         }
 
         .app-wrapper {
@@ -59,6 +65,7 @@
             padding: 0 20px;
             z-index: 1040;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: left 0.3s;
         }
 
         .brand-area {
@@ -95,9 +102,9 @@
             transition: all 0.3s;
         }
 
-        .sidebar-toggle:hover {
-            background: rgba(255,255,255,0.3);
-        }
+            .sidebar-toggle:hover {
+                background: rgba(255,255,255,0.3);
+            }
 
         /* User Area */
         .user-area {
@@ -134,72 +141,25 @@
             min-height: calc(100vh - var(--header-height) - var(--footer-height));
         }
 
-        /* Sidebar - Matches Image Theme */
+        /* Update these styles in your existing CSS */
+
+        /* Sidebar - Dark Theme */
         .app-sidebar {
             width: var(--sidebar-width);
-            background: white;
-            border-right: 1px solid var(--border-color);
-            padding: 0;
+            background: linear-gradient(180deg, var(--sidebar-bg) 0%, var(--sidebar-dark) 100%);
+            color: var(--sidebar-text);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
-        }
-
-        .sidebar-header {
-            padding: 20px 15px;
-            background: var(--light-blue);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .sidebar-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin: 0;
-            text-align: center;
-        }
-
-        /* Menu Items - Exact Match to Image */
-        .sidebar-menu {
-            padding: 15px 0;
-        }
-
-        .nav-link {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            color: #555;
-            text-decoration: none;
-            border-left: 4px solid transparent;
-            transition: all 0.2s;
-            font-weight: 500;
-            margin: 2px 10px;
-            border-radius: 4px;
-        }
-
-        .nav-link:hover {
-            background-color: var(--hover-bg);
-            color: var(--secondary-blue);
-            border-left-color: var(--secondary-blue);
-        }
-
-        .nav-link.active {
-            background-color: var(--active-bg);
-            color: var(--secondary-blue);
-            border-left-color: var(--secondary-blue);
-            font-weight: 600;
-        }
-
-        .nav-link i {
-            width: 20px;
-            text-align: center;
-            color: #7f8c8d;
-            font-size: 16px;
-        }
-
-        .nav-link.active i,
-        .nav-link:hover i {
-            color: var(--secondary-blue);
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1035;
+            height: calc(100vh - var(--header-height) - var(--footer-height)); /* NEW: Fixed height */
+            position: fixed; /* NEW: Fixed positioning */
+            top: var(--header-height); /* NEW: Position below header */
+            left: 0;
+            bottom: var(--footer-height); /* NEW: Position above footer */
         }
 
         /* Main Content Area */
@@ -208,30 +168,339 @@
             padding: 20px;
             overflow: auto;
             background-color: #f8fafc;
+            transition: margin-left 0.3s;
+            margin-left: var(--sidebar-width); /* NEW: Push content right */
+            margin-top: var(--header-height); /* NEW: Account for header */
+            margin-bottom: var(--footer-height); /* NEW: Account for footer */
+            min-height: calc(100vh - var(--header-height) - var(--footer-height)); /* NEW */
         }
 
+        /* Collapsed State */
+        body.sidebar-collapsed .app-sidebar {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        body.sidebar-collapsed .app-main {
+            margin-left: var(--sidebar-collapsed-width); /* NEW: Adjust margin when collapsed */
+        }
+
+        /* Hover State */
+        body:not(.sidebar-collapsed-manual):hover .app-sidebar {
+            width: var(--sidebar-width);
+        }
+
+        body:not(.sidebar-collapsed-manual):hover .app-main {
+            margin-left: var(--sidebar-width); /* NEW: Adjust margin on hover expand */
+        }
+
+        /* Responsive Design - Mobile */
+        @@media (max-width: 768px) {
+            .app-sidebar
+
+        {
+            position: fixed;
+            left: 0;
+            top: var(--header-height);
+            bottom: var(--footer-height); /* NEW: Position above footer */
+            z-index: 1035;
+            transform: translateX(-100%);
+            width: 250px !important;
+            height: auto; /* Reset height for mobile */
+        }
+
+        body.sidebar-collapsed .app-sidebar {
+            transform: translateX(0);
+        }
+
+        .app-main {
+            padding: 15px;
+            margin-left: 0 !important; /* Reset margin on mobile */
+            margin-top: var(--header-height);
+            margin-bottom: var(--footer-height);
+            min-height: calc(100vh - var(--header-height) - var(--footer-height));
+        }
+
+        /* Disable hover on mobile */
+        body:not(.sidebar-collapsed-manual):hover .app-sidebar {
+            width: 250px;
+        }
+
+        body:not(.sidebar-collapsed-manual):hover .app-main {
+            margin-left: 0; /* Reset on mobile */
+        }
+
+        }
+
+        /* Update sidebar menu to take full height */
+        .sidebar-menu {
+            flex: 1;
+            padding: 1rem 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 100%; /* NEW: Take full height */
+        }
+
+            .sidebar-menu .nav {
+                padding: 0;
+            }
+
+        .nav-item {
+            margin: 2px 0;
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            color: var(--sidebar-text);
+            padding: 12px 20px;
+            text-decoration: none;
+            border-left: 4px solid transparent;
+            transition: all 0.2s;
+            position: relative;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+            .nav-link:hover {
+                background: rgba(255, 255, 255, 0.05);
+                color: white;
+                border-left-color: var(--secondary-blue);
+            }
+
+            .nav-link.active {
+                background: rgba(52, 152, 219, 0.15);
+                color: white;
+                border-left-color: var(--secondary-blue);
+                font-weight: 600;
+            }
+
+            .nav-link i {
+                width: 20px;
+                text-align: center;
+                margin-right: 12px;
+                font-size: 1.1rem;
+                flex-shrink: 0;
+            }
+
+        .nav-text {
+            transition: opacity 0.3s;
+            display: inline-block;
+        }
+
+        .active-indicator {
+            width: 8px;
+            height: 8px;
+            background: #2ecc71;
+            border-radius: 50%;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Submenu Styles */
+        .has-submenu .nav-link {
+            justify-content: space-between;
+        }
+
+        .submenu-icon {
+            font-size: 0.8rem;
+            transition: transform 0.3s;
+            margin-right: 0;
+            flex-shrink: 0;
+        }
+
+        .has-submenu .nav-link[aria-expanded="true"] .submenu-icon {
+            transform: rotate(180deg);
+        }
+
+        .submenu {
+            background: rgba(0, 0, 0, 0.2);
+            padding-left: 2.5rem;
+        }
+
+            .submenu .nav-link {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+                border-left: 2px solid transparent;
+            }
+
+                .submenu .nav-link:hover,
+                .submenu .nav-link.active {
+                    background: rgba(255, 255, 255, 0.05);
+                    border-left-color: #2ecc71;
+                }
+
+        /* Sidebar Footer */
+        .sidebar-footer {
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+            transition: opacity 0.3s;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+            .sidebar-footer .user-info h6 {
+                color: white;
+                font-size: 0.9rem;
+                margin-bottom: 2px;
+            }
+
+            .sidebar-footer .user-info small {
+                color: var(--sidebar-text);
+                font-size: 0.8rem;
+            }
+
+        /* Main Content Area */
+        .app-main {
+            flex: 1;
+            padding: 20px;
+            overflow: auto;
+            background-color: #f8fafc;
+            transition: margin-left 0.3s;
+        }
+
+        /* Collapsed State */
+        body.sidebar-collapsed .app-sidebar {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        body.sidebar-collapsed .sidebar-brand h5,
+        body.sidebar-collapsed .sidebar-brand small,
+        body.sidebar-collapsed .nav-text,
+        body.sidebar-collapsed .active-indicator,
+        body.sidebar-collapsed .submenu-icon,
+        body.sidebar-collapsed .sidebar-footer,
+        body.sidebar-collapsed .has-submenu .nav-link .submenu-icon {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        body.sidebar-collapsed .nav-link {
+            justify-content: center;
+            padding: 12px;
+            border-left: 3px solid transparent;
+        }
+
+            body.sidebar-collapsed .nav-link i {
+                margin: 0;
+                font-size: 18px;
+            }
+
+        body.sidebar-collapsed .has-submenu .nav-link {
+            justify-content: center !important;
+        }
+
+        body.sidebar-collapsed .submenu {
+            position: absolute;
+            left: 100%;
+            top: 0;
+            min-width: 200px;
+            background: var(--sidebar-dark);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+            padding-left: 0;
+            display: none;
+        }
+
+        body.sidebar-collapsed .has-submenu:hover .submenu {
+            display: block;
+        }
+
+        body.sidebar-collapsed .submenu .nav-link {
+            justify-content: flex-start;
+            padding: 10px 20px;
+        }
+
+        /* Hover State */
+        body:not(.sidebar-collapsed-manual):hover .app-sidebar {
+            width: var(--sidebar-width);
+        }
+
+            body:not(.sidebar-collapsed-manual):hover .app-sidebar .sidebar-brand h5,
+            body:not(.sidebar-collapsed-manual):hover .app-sidebar .sidebar-brand small,
+            body:not(.sidebar-collapsed-manual):hover .app-sidebar .nav-text,
+            body:not(.sidebar-collapsed-manual):hover .app-sidebar .active-indicator,
+            body:not(.sidebar-collapsed-manual):hover .app-sidebar .submenu-icon,
+            body:not(.sidebar-collapsed-manual):hover .app-sidebar .sidebar-footer {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            body:not(.sidebar-collapsed-manual):hover .app-sidebar .nav-link {
+                justify-content: flex-start;
+                padding: 12px 20px;
+            }
+
+                body:not(.sidebar-collapsed-manual):hover .app-sidebar .nav-link i {
+                    margin-right: 12px;
+                }
+
+            body:not(.sidebar-collapsed-manual):hover .app-sidebar .has-submenu .nav-link {
+                justify-content: space-between !important;
+            }
+
+            body:not(.sidebar-collapsed-manual):hover .app-sidebar .submenu {
+                position: static;
+                box-shadow: none;
+                display: block !important;
+            }
+
+        /* Hover tooltip for collapsed state */
+        body.sidebar-collapsed-manual .nav-item {
+            position: relative;
+        }
+
+            body.sidebar-collapsed-manual .nav-item:hover::after {
+                content: attr(data-title);
+                position: absolute;
+                left: 100%;
+                top: 50%;
+                transform: translateY(-50%);
+                background: var(--sidebar-dark);
+                color: white;
+                padding: 6px 12px;
+                border-radius: 4px;
+                font-size: 12px;
+                white-space: nowrap;
+                z-index: 1000;
+                box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+                margin-left: 10px;
+                pointer-events: none;
+            }
+
+        /* Content Card */
         .content-card {
             background: white;
-            border-radius: 6px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            padding: 25px;
             margin-bottom: 20px;
+            border: 1px solid #e9ecef;
         }
 
         .content-header {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             padding-bottom: 15px;
             border-bottom: 1px solid var(--border-color);
         }
 
         .content-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 600;
             color: var(--text-dark);
             margin: 0;
         }
 
-        /* Footer - Matches Image */
+        .content-subtitle {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Footer */
         footer.footer {
             position: fixed;
             left: 0;
@@ -246,100 +515,194 @@
             z-index: 1030;
             color: #666;
             font-size: 13px;
+            transition: left 0.3s;
         }
 
-        /* Collapsed State */
-        .sidebar-collapsed .app-sidebar {
-            width: 70px;
+        /* Form Controls */
+        .form-control:disabled,
+        .form-control[readonly] {
+            background-color: #f8f9fa;
+            opacity: 1;
+            cursor: not-allowed;
         }
 
-        .sidebar-collapsed .sidebar-title,
-        .sidebar-collapsed .nav-link span {
-            display: none;
+        /* Table Styling */
+        .data-table-wrapper {
+            overflow-x: auto;
         }
 
-        .sidebar-collapsed .nav-link {
-            justify-content: center;
-            padding: 12px;
-            margin: 2px 5px;
-        }
-
-        .sidebar-collapsed .nav-link i {
-            margin: 0;
-            font-size: 18px;
-        }
-
-        /* Table Styling - Matches Image */
         .data-table {
             width: 100%;
             background: white;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
+            border-radius: 6px;
             overflow: hidden;
+            margin-bottom: 1rem;
         }
 
-        .data-table thead {
-            background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
-        }
+            .data-table thead {
+                background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+            }
 
-        .data-table th {
-            padding: 12px 15px;
-            font-weight: 600;
-            color: var(--text-dark);
-            border-bottom: 2px solid var(--border-color);
-            text-align: left;
-        }
+            .data-table th {
+                padding: 15px;
+                font-weight: 600;
+                color: var(--text-dark);
+                border-bottom: 2px solid var(--border-color);
+                text-align: left;
+                white-space: nowrap;
+            }
 
-        .data-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-        }
+            .data-table td {
+                padding: 12px 15px;
+                border-bottom: 1px solid var(--border-color);
+                vertical-align: middle;
+            }
 
-        .data-table tbody tr:hover {
-            background-color: #f8fafc;
-        }
+            .data-table tbody tr:hover {
+                background-color: #f8fafc;
+            }
+
+            .data-table tbody tr:last-child td {
+                border-bottom: none;
+            }
 
         /* Status Badges */
         .status-badge {
-            padding: 4px 12px;
-            border-radius: 12px;
+            padding: 5px 12px;
+            border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
+            display: inline-block;
         }
 
-        .status-complete {
+        .badge-success {
             background-color: #d4edda;
             color: #155724;
         }
 
-        .status-pending {
+        .badge-warning {
             background-color: #fff3cd;
             color: #856404;
         }
 
-        .status-inprogress {
+        .badge-info {
             background-color: #d1ecf1;
             color: #0c5460;
         }
 
+        .badge-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-secondary {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
         /* Buttons */
-        .btn-outline-danger {
-            border-color: #dc3545;
-            color: #dc3545;
-        }
-
-        .btn-outline-danger:hover {
-            background-color: #dc3545;
-            color: white;
-        }
-
         .btn-primary {
             background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
             border: none;
+            font-weight: 500;
         }
 
-        /* Responsive */
+            .btn-primary:hover {
+                background: linear-gradient(135deg, #2980b9 0%, #1c6ea4 100%);
+                transform: translateY(-1px);
+                box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
+            }
+
+        .btn-outline-danger {
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            font-weight: 500;
+        }
+
+            .btn-outline-danger:hover {
+                background-color: #dc3545;
+                color: white;
+            }
+
+        /* Alert Messages */
+        .alert-message {
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-spinner {
+            color: white;
+            font-size: 2rem;
+        }
+
+        /* Card Styles */
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--secondary-blue);
+        }
+
+            .stat-card h3 {
+                font-size: 28px;
+                font-weight: 700;
+                color: var(--text-dark);
+                margin-bottom: 5px;
+            }
+
+            .stat-card p {
+                color: var(--text-light);
+                margin: 0;
+                font-size: 14px;
+            }
+
+        /* Responsive Design */
         @@media (max-width: 768px) {
             .app-sidebar {
                 position: fixed;
@@ -348,19 +711,54 @@
                 bottom: var(--footer-height);
                 z-index: 1035;
                 transform: translateX(-100%);
+                width: 250px !important;
             }
-            
-            .sidebar-collapsed .app-sidebar {
+
+            body.sidebar-collapsed .app-sidebar {
                 transform: translateX(0);
-                width: 250px;
             }
-            
+
             .app-main {
                 padding: 15px;
+                margin-left: 0 !important;
             }
-            
+
             .system-title {
                 display: none;
+            }
+
+            .user-info {
+                display: none !important;
+            }
+
+            .content-card {
+                padding: 15px;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 10px;
+                font-size: 13px;
+            }
+            /* Disable hover on mobile */
+            body:not(.sidebar-collapsed-manual):hover .app-sidebar {
+                width: 250px;
+            }
+        }
+
+        /* Print Styles */
+        @@media print {
+            .app-header, .app-sidebar, footer.footer {
+                display: none !important;
+            }
+
+            .app-body {
+                margin: 0 !important;
+            }
+
+            .content-card {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
             }
         }
 
@@ -376,6 +774,14 @@
         .bg-light {
             background-color: #f8f9fa !important;
         }
+
+        .shadow-sm {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -383,22 +789,41 @@
         var currentUser = WorkContext?.CurrentUser;
         var userName = currentUser?.EmailID ?? User?.Identity?.Name ?? "Guest";
         var userRole = currentUser?.DefaultRoleName ?? User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value ?? "";
+        var userDisplayName = currentUser?.EmailID;
+
         Func<string, bool> HasPermission = (page) =>
         {
             if (currentUser?.DefaultPermissions == null) return false;
             return currentUser.DefaultPermissions.Any(p => !string.IsNullOrEmpty(p) && p.IndexOf(page, System.StringComparison.OrdinalIgnoreCase) >= 0);
         };
-        
+
         var controllerName = ViewContext.RouteData.Values["Controller"]?.ToString();
         var actionName = ViewContext.RouteData.Values["Action"]?.ToString();
+
+        // Helper function to check if controller is in Masters
+        bool IsMastersController()
+        {
+            var mastersControllers = new[] { "UserMaster", "EngineerMaster", "CustomerMaster", "NatureOfComplaint", "StatusMaster" };
+            return mastersControllers.Contains(controllerName);
+        }
     }
 
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
     <div class="app-wrapper">
+        <!-- Header -->
         <header class="app-header">
             <div class="brand-area">
-                <button id="sidebarToggle" class="sidebar-toggle" aria-label="Toggle sidebar">
+                @* <button id="sidebarToggle" class="sidebar-toggle" aria-label="Toggle sidebar" title="Toggle Sidebar">
                     <i class="fas fa-bars"></i>
-                </button>
+                </button> *@
                 <img src="~/images/Logo1.png" alt="CFT Logo" class="header-logo" />
                 <span class="system-title">CFT Complaint Management System</span>
             </div>
@@ -407,7 +832,7 @@
                 @if (User?.Identity?.IsAuthenticated == true)
                 {
                     <div class="user-info d-none d-md-block">
-                        <div class="user-name">@userName</div>
+                        <div class="user-name">@userDisplayName</div>
                         @if (!string.IsNullOrEmpty(userRole))
                         {
                             <div class="user-role">@userRole</div>
@@ -416,177 +841,399 @@
                     <form asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-outline-danger btn-sm">
-                            <i class="fas fa-sign-out-alt"></i> Logout
+                            <i class="fas fa-sign-out-alt"></i> <span class="d-none d-md-inline">Logout</span>
                         </button>
                     </form>
                 }
                 else
                 {
                     <a class="btn btn-primary btn-sm" asp-controller="Login" asp-action="Index">
-                        <i class="fas fa-sign-in-alt"></i> Login
+                        <i class="fas fa-sign-in-alt"></i> <span class="d-none d-md-inline">Login</span>
                     </a>
                 }
             </div>
         </header>
 
+        <!-- Main Body -->
         <div class="app-body">
             <div class="app-content-row">
+                <!-- Sidebar -->
                 <aside class="app-sidebar">
+                    <!-- Sidebar Header -->
                     @* <div class="sidebar-header">
-                        <h6 class="sidebar-title">Navigation Menu</h6>
+                        <div class="sidebar-brand">
+                            <i class="fas fa-headset fa-2x text-primary"></i>
+                            <h5 class="mt-2 mb-0">CFT Solutions</h5>
+                            <small>Complaint Management</small>
+                        </div>
                     </div> *@
-                    
+
+                    <!-- Sidebar Menu -->
                     <div class="sidebar-menu">
                         <nav class="nav flex-column">
+                            <!-- Dashboard -->
                             @if (HasPermission("Dashboard"))
                             {
-                                <a class="nav-link @(controllerName == "Dashboard" ? "active" : "")"
-                                   asp-controller="Dashboard" asp-action="Index">
-                                    <i class="fas fa-tachometer-alt"></i>
-                                    <span>Dashboard</span>
-                                </a>
+                                <div class="nav-item" data-title="Dashboard">
+                                    <a class="nav-link @(controllerName == "Dashboard" ? "active" : "")"
+                                       asp-controller="Dashboard" asp-action="Index">
+                                        <i class="fas fa-tachometer-alt"></i>
+                                        <span class="nav-text">Dashboard</span>
+                                        @if (controllerName == "Dashboard")
+                                        {
+                                            <span class="active-indicator"></span>
+                                        }
+                                    </a>
+                                </div>
                             }
-                            <!-- Exact menu items from image -->
-                            @* <a class="nav-link @(controllerName == "Complaint" && actionName == "Index" ? "active" : "")" 
-                               asp-controller="Complaint" asp-action="Index">
-                                <i class="fas fa-list"></i>
-                                <span>View Complaints</span>
-                            </a>
-                            
-                            <a class="nav-link @(controllerName == "Complaint" && actionName == "Create" ? "active" : "")" 
-                               asp-controller="Complaint" asp-action="Create">
-                                <i class="fas fa-plus-circle"></i>
-                                <span>Register Complaint</span>
-                            </a> *@
-                            @* 
-                            <a class="nav-link @(controllerName == "CustomerMaster" ? "active" : "")" 
-                               asp-controller="CustomerMaster" asp-action="Index">
-                                <i class="fas fa-users"></i>
-                                <span>Customer Master</span>
-                            </a>
-                            
-                            <a class="nav-link @(controllerName == "EngineerMaster" ? "active" : "")" 
-                               asp-controller="EngineerMaster" asp-action="Index">
-                                <i class="fas fa-user-cog"></i>
-                                <span>Engineer Master</span>
-                            </a> *@
-                            
-                            <a class="nav-link @(controllerName == "UserMaster" ? "active" : "")" 
-                               asp-controller="UserMaster" asp-action="Index">
-                                <i class="fas fa-user-shield"></i>
-                                <span>User Master</span>
-                            </a>
-                            
-                            @* <a class="nav-link" href="#">
-                                <i class="fas fa-user-tag"></i>
-                                <span>User Role Mapping</span>
-                            </a>
-                            
-                            <a class="nav-link" href="#">
-                                <i class="fas fa-key"></i>
-                                <span>Role Permission Mapping</span>
-                            </a> *@
-                            
-                            @* <a class="nav-link @(controllerName == "Profile" ? "active" : "")" 
-                               asp-controller="Profile" asp-action="Index">
-                                <i class="fas fa-user-circle"></i>
-                                <span>Profile</span>
-                            </a>
-                             *@
-                            <!-- Additional items from your code -->
-                           
-                            
-                            @* @if (HasPermission("Reports"))
-                            {
-                                <a class="nav-link @(controllerName == "Reports" ? "active" : "")" 
-                                   asp-controller="Reports" asp-action="Index">
-                                    <i class="fas fa-chart-bar"></i>
-                                    <span>Reports</span>
+
+                            <!-- Complaints -->
+                            <div class="nav-item" data-title="Complaints">
+                                <a class="nav-link @(controllerName == "ComplaintMaster" ? "active" : "")"
+                                   asp-controller="ComplaintMaster" asp-action="Index">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <span class="nav-text">Complaints</span>
+                                    @if (controllerName == "ComplaintMaster")
+                                    {
+                                        <span class="active-indicator"></span>
+                                    }
                                 </a>
-                            } *@
+                            </div>
+
+                            <!-- Masters Section with Submenu -->
+                            <div class="nav-item has-submenu" data-title="Masters">
+                                <a class="nav-link d-flex justify-content-between align-items-center @(IsMastersController() ? "active" : "")"
+                                   href="#mastersSubmenu" data-bs-toggle="collapse"
+                                   aria-expanded="@IsMastersController()" aria-controls="mastersSubmenu">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-cogs"></i>
+                                        <span class="nav-text ms-2">Masters</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down submenu-icon"></i>
+                                </a>
+
+                                <div class="collapse @(IsMastersController() ? "show" : "")" id="mastersSubmenu">
+                                    <div class="submenu">
+                                        @if (HasPermission("UserMaster"))
+                                        {
+                                            <a class="nav-link @(controllerName == "UserMaster" ? "active" : "")"
+                                               asp-controller="UserMaster" asp-action="Index">
+                                                <i class="fas fa-users-cog"></i>
+                                                <span class="nav-text">User Master</span>
+                                            </a>
+                                        }
+
+                                        @if (HasPermission("EngineerMaster"))
+                                        {
+                                            <a class="nav-link @(controllerName == "EngineerMaster" ? "active" : "")"
+                                               asp-controller="EngineerMaster" asp-action="Index">
+                                                <i class="fas fa-tools"></i>
+                                                <span class="nav-text">Engineers</span>
+                                            </a>
+                                        }
+
+                                        @if (HasPermission("CustomerMaster"))
+                                        {
+                                            <a class="nav-link @(controllerName == "CustomerMaster" ? "active" : "")"
+                                               asp-controller="CustomerMaster" asp-action="Index">
+                                                <i class="fas fa-user-tie"></i>
+                                                <span class="nav-text">Customers</span>
+                                            </a>
+                                        }
+
+                                        @if (HasPermission("NatureOfComplaint"))
+                                        {
+                                            <a class="nav-link @(controllerName == "NatureOfComplaint" ? "active" : "")"
+                                               asp-controller="NatureOfComplaint" asp-action="Index">
+                                                <i class="fas fa-clipboard-list"></i>
+                                                <span class="nav-text">Complaint Types</span>
+                                            </a>
+                                        }
+
+                                        @if (HasPermission("StatusMaster"))
+                                        {
+                                            <a class="nav-link @(controllerName == "StatusMaster" ? "active" : "")"
+                                               asp-controller="StatusMaster" asp-action="Index">
+                                                <i class="fas fa-flag"></i>
+                                                <span class="nav-text">Status Types</span>
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
                         </nav>
                     </div>
                 </aside>
 
+                <!-- Main Content -->
                 <main class="app-main">
                     <div class="content-card">
                         @if (!string.IsNullOrEmpty(ViewData["Title"]?.ToString()))
                         {
                             <div class="content-header">
                                 <h1 class="content-title">@ViewData["Title"]</h1>
+                                @if (!string.IsNullOrEmpty(ViewData["Subtitle"]?.ToString()))
+                                {
+                                    <p class="content-subtitle">@ViewData["Subtitle"]</p>
+                                }
                             </div>
                         }
+
+                        <!-- Alert Messages -->
+                        @if (TempData["SuccessMessage"] != null)
+                        {
+                            <div class="alert-message alert-success">
+                                <i class="fas fa-check-circle me-2"></i> @TempData["SuccessMessage"]
+                            </div>
+                        }
+                        @if (TempData["ErrorMessage"] != null)
+                        {
+                            <div class="alert-message alert-error">
+                                <i class="fas fa-exclamation-circle me-2"></i> @TempData["ErrorMessage"]
+                            </div>
+                        }
+
                         @RenderBody()
                     </div>
                 </main>
             </div>
         </div>
 
+        <!-- Footer -->
         <footer class="footer">
-            <div class="container">
-                &copy; 2025 CFT Complaint Management System
+            <div class="container text-center">
+                &copy; @DateTime.Now.Year - CFT Complaint Management System
             </div>
         </footer>
     </div>
 
+    <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/bootbox.min.js"></script>
-    <script src="~/lib/js/jquery.datatables.min.js"></script>
-    
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
     <script>
         (function () {
+            'use strict';
+
             const toggleBtn = document.getElementById('sidebarToggle');
-            const storageKey = 'cft_sidebar_collapsed';
-            
-            function setCollapsed(collapsed) {
-                const body = document.body;
-                if (collapsed) {
-                    body.classList.add('sidebar-collapsed');
-                    toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                    toggleBtn.setAttribute('title', 'Expand Sidebar');
-                } else {
-                    body.classList.remove('sidebar-collapsed');
-                    toggleBtn.innerHTML = '<i class="fas fa-times"></i>';
-                    toggleBtn.setAttribute('title', 'Collapse Sidebar');
+            const sidebar = document.querySelector('.app-sidebar');
+            const body = document.body;
+            const storageKey = 'cft_sidebar_state'; // 'expanded', 'collapsed-manual', or 'collapsed-auto'
+
+            // Initialize sidebar state
+            // function initSidebar() {
+            //     try {
+            //         const savedState = localStorage.getItem(storageKey) || 'expanded';
+
+            //         if (savedState === 'collapsed-manual') {
+            //             Manual collapsed state
+            //             body.classList.add('sidebar-collapsed', 'sidebar-collapsed-manual');
+            //             updateToggleButton(true, true);
+            //         } else if (savedState === 'collapsed-auto') {
+            //             Auto-collapsed (hover will expand)
+            //             body.classList.add('sidebar-collapsed');
+            //             body.classList.remove('sidebar-collapsed-manual');
+            //             updateToggleButton(true, false);
+            //         } else {
+            //             Expanded state
+            //             body.classList.remove('sidebar-collapsed', 'sidebar-collapsed-manual');
+            //             updateToggleButton(false, false);
+            //         }
+            //     } catch (e) {
+            //         console.log('LocalStorage not available');
+            //     }
+            // }
+
+            // Update toggle button icon
+            // function updateToggleButton(isCollapsed, isManual) {
+            //     debugger;
+            //     if (isCollapsed) {
+            //         if (isManual) {
+            //             toggleBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            //             toggleBtn.setAttribute('title', 'Expand Sidebar');
+            //         } else {
+            //             toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            //             toggleBtn.setAttribute('title', 'Manually Collapse Sidebar');
+            //         }
+            //     } else {
+            //         toggleBtn.innerHTML = '<i class="fas fa-times"></i>';
+            //         toggleBtn.setAttribute('title', 'Collapse Sidebar');
+            //     }
+            // }
+
+            // Toggle sidebar function
+            // function toggleSidebar() {
+            //     debugger;
+            //     const isCollapsed = body.classList.contains('sidebar-collapsed');
+            //     const isManual = body.classList.contains('sidebar-collapsed-manual');
+
+            //     if (isCollapsed) {
+            //         if (isManual) {
+            //             From manual collapsed to expanded
+            //             body.classList.remove('sidebar-collapsed', 'sidebar-collapsed-manual');
+            //             updateToggleButton(false, false);
+            //             saveSidebarState('expanded');
+            //         } else {
+            //             From auto-collapsed to manual collapsed
+            //             body.classList.add('sidebar-collapsed-manual');
+            //             updateToggleButton(true, true);
+            //             saveSidebarState('collapsed-manual');
+            //         }
+            //     } else {
+            //         From expanded to manual collapsed
+            //         body.classList.add('sidebar-collapsed', 'sidebar-collapsed-manual');
+            //         updateToggleButton(true, true);
+            //         saveSidebarState('collapsed-manual');
+            //     }
+            // }
+
+            // Handle hover behavior
+            function handleHoverBehavior() {
+                const isManualCollapsed = body.classList.contains('sidebar-collapsed-manual');
+
+                if (!isManualCollapsed) {
+                    // Auto-collapse when mouse leaves sidebar area
+                    const sidebarArea = document.querySelector('.app-content-row');
+
+                    sidebarArea.addEventListener('mouseenter', function(e) {
+                        if (body.classList.contains('sidebar-collapsed')) {
+                            body.classList.remove('sidebar-collapsed');
+                            saveSidebarState('expanded');
+                        }
+                    });
+
+                    sidebarArea.addEventListener('mouseleave', function(e) {
+                        if (!body.classList.contains('sidebar-collapsed') &&
+                            !e.relatedTarget?.closest('.app-sidebar')) {
+                            body.classList.add('sidebar-collapsed');
+                            saveSidebarState('collapsed-auto');
+                        }
+                    });
+
+                    sidebar.addEventListener('mouseenter', function(e) {
+                        if (body.classList.contains('sidebar-collapsed')) {
+                            body.classList.remove('sidebar-collapsed');
+                        }
+                    });
+
+                    sidebar.addEventListener('mouseleave', function(e) {
+                        if (!body.classList.contains('sidebar-collapsed') &&
+                            !e.relatedTarget?.closest('.app-content-row')) {
+                            setTimeout(() => {
+                                if (!sidebar.matches(':hover') && !document.querySelector('.app-content-row').matches(':hover')) {
+                                    body.classList.add('sidebar-collapsed');
+                                    saveSidebarState('collapsed-auto');
+                                }
+                            }, 100);
+                        }
+                    });
                 }
             }
-            
-            // Initialize from localStorage
-            try {
-                const saved = localStorage.getItem(storageKey);
-                if (saved === '1') {
-                    setCollapsed(true);
+
+            // Save sidebar state
+            function saveSidebarState(state) {
+                try {
+                    localStorage.setItem(storageKey, state);
+                } catch (e) {
+                    console.log('Failed to save sidebar state');
                 }
-            } catch (e) {
-                console.log('LocalStorage not available');
             }
-            
-            // Toggle sidebar
-            if (toggleBtn) {
-                toggleBtn.addEventListener('click', function () {
-                    const collapsed = !document.body.classList.contains('sidebar-collapsed');
-                    setCollapsed(collapsed);
-                    try {
-                        localStorage.setItem(storageKey, collapsed ? '1' : '0');
-                    } catch (e) {
-                        console.log('Failed to save sidebar state');
+
+            // Auto-expand submenu when on masters page
+            function handleMastersSubmenu() {
+                const mastersControllers = ['UserMaster', 'EngineerMaster', 'CustomerMaster', 'NatureOfComplaint', 'StatusMaster'];
+                const currentController = '@controllerName';
+
+                if (mastersControllers.includes(currentController)) {
+                    const submenu = document.getElementById('mastersSubmenu');
+                    if (submenu) {
+                        submenu.classList.add('show');
+                        const submenuLink = document.querySelector('[href="#mastersSubmenu"]');
+                        if (submenuLink) {
+                            submenuLink.setAttribute('aria-expanded', 'true');
+                        }
                     }
-                });
+                }
             }
-            
-            // Auto-collapse on mobile when clicking outside
-            if (window.innerWidth <= 768) {
-                document.addEventListener('click', function(event) {
-                    const sidebar = document.querySelector('.app-sidebar');
-                    const isClickInsideSidebar = sidebar.contains(event.target);
-                    const isClickOnToggle = toggleBtn.contains(event.target);
-                    
-                    if (!isClickInsideSidebar && !isClickOnToggle && !document.body.classList.contains('sidebar-collapsed')) {
-                        setCollapsed(true);
-                    }
-                });
-            }
+
+            // Loading functions
+            window.showLoading = function() {
+                document.getElementById('loadingOverlay').style.display = 'flex';
+            };
+
+            window.hideLoading = function() {
+                document.getElementById('loadingOverlay').style.display = 'none';
+            };
+
+            // Initialize
+            document.addEventListener('DOMContentLoaded', function() {
+               // initSidebar();
+                handleMastersSubmenu();
+               // handleHoverBehavior();
+
+                // Toggle sidebar on button click
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', toggleSidebar);
+                }
+
+                // Auto-close alerts after 5 seconds
+                setTimeout(function() {
+                    const alerts = document.querySelectorAll('.alert-message');
+                    alerts.forEach(alert => {
+                        alert.style.transition = 'opacity 0.5s';
+                        alert.style.opacity = '0';
+                        setTimeout(() => alert.remove(), 500);
+                    });
+                }, 5000);
+
+                // Handle mobile sidebar click outside
+                if (window.innerWidth <= 768) {
+                    document.addEventListener('click', function(event) {
+                        const isClickInsideSidebar = sidebar.contains(event.target);
+                        const isClickOnToggle = toggleBtn.contains(event.target);
+
+                        if (!isClickInsideSidebar && !isClickOnToggle && !body.classList.contains('sidebar-collapsed')) {
+                            body.classList.add('sidebar-collapsed', 'sidebar-collapsed-manual');
+                            updateToggleButton(true, true);
+                            saveSidebarState('collapsed-manual');
+                        }
+                    });
+                }
+
+                // Initialize DataTables if present
+                if ($.fn.DataTable) {
+                    $('.data-table').DataTable({
+                        "pageLength": 10,
+                        "language": {
+                            "search": "Search:",
+                            "lengthMenu": "Show _MENU_ entries",
+                            "info": "Showing _START_ to _END_ of _TOTAL_ entries",
+                            "infoEmpty": "Showing 0 to 0 of 0 entries",
+                            "infoFiltered": "(filtered from _MAX_ total entries)",
+                            "zeroRecords": "No matching records found",
+                            "paginate": {
+                                "first": "First",
+                                "last": "Last",
+                                "next": "Next",
+                                "previous": "Previous"
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Window resize handler
+            window.addEventListener('resize', function() {
+                if (window.innerWidth <= 768 && !body.classList.contains('sidebar-collapsed')) {
+                    body.classList.add('sidebar-collapsed', 'sidebar-collapsed-manual');
+                    updateToggleButton(true, true);
+                    saveSidebarState('collapsed-manual');
+                }
+            });
+
         })();
     </script>
 

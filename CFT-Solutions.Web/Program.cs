@@ -11,6 +11,8 @@ using System.Globalization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using CFT_Solutions.Service.UserMaster;
 using CFT_Solutions.Service.Security;
+using CFT_Solutions.Service.CustomerMaster;
+using CFT_Solutions.Service.ComplaintMster;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,7 +78,10 @@ builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<IWorkContext, WebWorkContext>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICustomerMasterService, CustomerMasterService>();
 builder.Services.AddScoped<IEncryptionService, EncryptionService>();
+builder.Services.AddScoped<IComplaintService, ComplaintService>();
+
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAntiforgery(options =>
