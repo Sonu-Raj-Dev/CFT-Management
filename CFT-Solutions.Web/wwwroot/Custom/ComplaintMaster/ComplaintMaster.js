@@ -45,11 +45,18 @@ function validateAllFields() {
 
 // Show success message
 function showSuccess(message) {
-    $('#successMessage').text(message);
-    $('#successAlert').fadeIn();
-    $('#errorAlert').fadeOut();
-    setTimeout(() => $('#successAlert').fadeOut(), 5000);
+    const dialog = bootbox.alert({
+        title: "<i class='fa fa-check-circle text-success'></i> Success",
+        message: message,
+        centerVertical: true,
+        backdrop: false
+    });
+
+    setTimeout(function () {
+        dialog.modal('hide');
+    }, 1500);
 }
+
 
 // Make this function globally available
 
@@ -97,10 +104,11 @@ function onCustomerChange(customerId) {
 
 // Show error message
 function showError(message) {
-    $('#errorMessage').text(message);
-    $('#errorAlert').fadeIn();
-    $('#successAlert').fadeOut();
-    setTimeout(() => $('#errorAlert').fadeOut(), 5000);
+    bootbox.alert({
+        title: "<i class='fa fa-exclamation-triangle text-danger'></i> Error",
+        message: message,
+        centerVertical: true
+    });
 }
 
 // Show loading state on button
@@ -172,6 +180,7 @@ function saveComplaint(actionType) {
         processData: false, // Don't process the data
         contentType: false, // Don't set content type
         success: function (response) {
+            debugger;
             showLoading(submitButton, false);
 
             // Handle response
@@ -185,43 +194,41 @@ function saveComplaint(actionType) {
 }
 
 // Helper function to handle success response
-function handleAjaxResponse(response, actionType, submitButton) {
+function handleAjaxResponse(response, actionType) {
+
     if (response.message === "MODELERROR") {
-        // Handle model validation errors
+
+        let errorMessage = "Validation errors:<br>";
+
         if (response.errorlist) {
-            const errors = response.errorlist.split('#');
-            let errorMessage = 'Validation errors:<br>';
-            errors.forEach(err => {
+            response.errorlist.split('#').forEach(err => {
                 if (err.trim()) {
                     const parts = err.split(',');
                     if (parts.length >= 2) {
-                        errorMessage += `- ${parts[1]}<br>`;
+                        errorMessage += `• ${parts[1]}<br>`;
                     }
                 }
             });
-            showError(errorMessage);
         } else {
-            showError('Validation failed. Please check your input.');
+            errorMessage = 'Validation failed. Please check your input.';
         }
+
+        showError(errorMessage);
+        return;
     }
-    else if (response.success || response.message === "CREATE" || response.message === "UPDATE") {
-        const successMessage = actionType === 'SaveDraft'
-            ? 'Complaint saved as draft successfully!'
-            : 'Complaint submitted successfully!';
 
-        showSuccess(successMessage);
+    if (response.success || response.message === "CREATE" || response.message === "UPDATE") {
+        forceRemoveOverlays();
+        showSuccess(
+            actionType === 'SaveDraft'
+                ? 'Complaint saved as draft successfully!'
+                : 'Complaint submitted successfully!'
+        );
 
-        // If submitted, redirect after delay
-        if (actionType === 'Submit') {
-            setTimeout(function () {
-                window.location.href = BaseUrl + '/ComplaintMaster/Index';
-            }, 1500);
-        } else {
-            // If draft saved, update the complaint ID if it's a new record
-            if (response.Id) {
-                $('#Id').val(response.Id);
-            }
-        }
+        setTimeout(function () {
+            window.location.href = BaseUrl + '/ComplaintMaster/Index';
+        }, 1500);
+
     } else {
         showError(response.message || 'Failed to save complaint');
     }
@@ -229,16 +236,23 @@ function handleAjaxResponse(response, actionType, submitButton) {
 
 // Helper function to handle errors
 function handleAjaxError(xhr) {
-    if (xhr.responseJSON && xhr.responseJSON.message) {
+    if (xhr.responseJSON?.message) {
         showError(xhr.responseJSON.message);
     } else if (xhr.status === 401) {
         showError('Session expired. Please login again.');
     } else if (xhr.status === 403) {
         showError('You do not have permission to perform this action.');
     } else {
-        showError('An error occurred while processing your request. Please try again.');
+        showError('An unexpected error occurred. Please try again.');
     }
 }
+function forceRemoveOverlays() {
+    $('.modal-backdrop').remove();
+    $('body').removeClass('modal-open');
+    $('#loader, .loader, .loading-overlay').hide(); // adjust to your loader id/class
+}
+
+
 function loadUsers() {
 
     var searchText = $('#searchInput').val();

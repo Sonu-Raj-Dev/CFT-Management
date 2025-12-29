@@ -42,7 +42,7 @@ namespace CFT_Solutions.Web.Controllers
                 if (User?.Identity?.IsAuthenticated == true)
                 {
                     // already authenticated
-                    return RedirectToAction("Index", "Dashboard");
+                    return RedirectToAction("Index", "ComplaintMaster");
                 }
                     
                 return View();
@@ -55,7 +55,7 @@ namespace CFT_Solutions.Web.Controllers
 
         // POST: perform custom authentication (form fields: Email, Password)
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         [AllowAnonymous]
         public async Task<IActionResult> Index(string EmailId, string Password)
         {
@@ -135,7 +135,7 @@ namespace CFT_Solutions.Web.Controllers
                         _workContextRepository.CurrentUser = _userService.GetUserByLoginId(user.LoginId ?? user.EmailID);
                     }
 
-                    return RedirectToAction("Index", "Dashboard");
+                    return RedirectToAction("Index", "ComplaintMaster");
                 }
                 return View();
             }

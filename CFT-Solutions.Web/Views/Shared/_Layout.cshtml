@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - CFT Complaint Management System</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link href="~/css/site.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+    @* <link href="~/css/site.css" rel="stylesheet" /> *@
+    <link rel="stylesheet" href="~/lib/font-awesome css/css/all.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/lib/CSS/dataTables.bootstrap5.min.css" />
     <style>
         :root {
             --header-height: 50px;
@@ -824,7 +824,7 @@
                 @* <button id="sidebarToggle" class="sidebar-toggle" aria-label="Toggle sidebar" title="Toggle Sidebar">
                     <i class="fas fa-bars"></i>
                 </button> *@
-                <img src="~/images/Logo1.png" alt="CFT Logo" class="header-logo" />
+                @* <img src="~/images/Logo2.png" alt="CFT Logo" class="header-logo" /> *@
                 <span class="system-title">CFT Complaint Management System</span>
             </div>
 
@@ -872,7 +872,7 @@
                     <div class="sidebar-menu">
                         <nav class="nav flex-column">
                             <!-- Dashboard -->
-                            @if (HasPermission("Dashboard"))
+                            @* @if (HasPermission("Dashboard"))
                             {
                                 <div class="nav-item" data-title="Dashboard">
                                     <a class="nav-link @(controllerName == "Dashboard" ? "active" : "")"
@@ -885,7 +885,7 @@
                                         }
                                     </a>
                                 </div>
-                            }
+                            } *@
 
                             <!-- Complaints -->
                             <div class="nav-item" data-title="Complaints">
@@ -1011,8 +1011,8 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/bootbox.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/lib/JS/jquery.dataTables.min.js"></script>
+    <script src="~/lib/bootbox.min.js"></script>
 
     <script>
         (function () {

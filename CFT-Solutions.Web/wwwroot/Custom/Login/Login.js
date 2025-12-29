@@ -103,10 +103,10 @@ $(document).ready(function () {
                 Password: password,
                 RememberMe: $('input[name="RememberMe"]').is(':checked')
             },
-            headers: {
-                'RequestVerificationToken': token,
-                'X-Requested-With': 'XMLHttpRequest'
-            },
+            //headers: {
+            //    'RequestVerificationToken': token,
+            //    'X-Requested-With': 'XMLHttpRequest'
+            //},
             success: function (response, textStatus, xhr) {
                 console.log("AJAX Success - Status:", textStatus);
                 console.log("Response type:", typeof response);
@@ -144,10 +144,10 @@ $(document).ready(function () {
 
                 // If login successful without reset
                 if (parsed && parsed.success) {
-                    console.log("Login successful, redirecting to:", parsed.redirectUrl || (BaseUrl + '/Dashboard'));
+                    console.log("Login successful, redirecting to:", parsed.redirectUrl || (BaseUrl + '/ComplaintMaster'));
                     loginBtn.find('span').text('Login Successful!');
                     setTimeout(function () {
-                        window.location.href = parsed.redirectUrl || (BaseUrl + '/Dashboard');
+                        window.location.href = parsed.redirectUrl || (BaseUrl + '/ComplaintMaster');
                     }, 300);
                     return;
                 }
@@ -155,7 +155,7 @@ $(document).ready(function () {
                 // If response is HTML (redirected)
                 if (typeof response === 'string' && (response.includes('<!DOCTYPE') || response.includes('<html'))) {
                     console.log("HTML response detected, redirecting to dashboard");
-                    window.location.href = BaseUrl + '/Dashboard';
+                    window.location.href = BaseUrl + '/ComplaintMaster';
                     return;
                 }
 

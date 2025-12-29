@@ -59,7 +59,7 @@ namespace CFT_Solutions.Web.Controllers
         {
             try
             {
-                var MasterTypeId = 2;
+                var MasterTypeId = 1;
                 var data = _userMasterService.GetUserMasterDashBoardData(searchtext, MasterTypeId);
                 if (data != null)
                 {

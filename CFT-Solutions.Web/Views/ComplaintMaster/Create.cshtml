@@ -51,7 +51,7 @@
                 <div class="col-md-3 form-group">
                     <label>Select Customer <span class="text-danger">*</span></label>
                     
-                    @if (isEditable)
+                    @if (isEditable ||Model.Id==0)
                     {
                         @Html.DropDownListFor(x => x.CustomerId, 
                             new SelectList(Model.CustomersList, "Id", "Name", Model.CustomerId),
@@ -115,9 +115,9 @@
                 <div class="col-md-3 form-group">
                     <label>Nature Of Complaint <span class="text-danger">*</span></label>
                     
-                    @if (isEditable)
+                    @if (isEditable ||Model.Id==0)
                     {
-                        <select name="NatureOfComplaintId" class="form-control" id="natureofcomplaint" required>
+                        <select name="NatureOfComplaintId" class="form-control" id="natureofcomplaintId" required>
                             <option value="">Select Nature</option>
                             @foreach (var item in Model.NatureOfComplaintsList)
                             {
@@ -127,7 +127,7 @@
                     }
                     else
                     {
-                        <select name="NatureOfComplaintId" class="form-control" id="natureofcomplaint" disabled required>
+                        <select name="NatureOfComplaintId" class="form-control" id="natureofcomplaintId" disabled required>
                             <option value="">Select Nature</option>
                             @foreach (var item in Model.NatureOfComplaintsList)
                             {
@@ -156,7 +156,7 @@
                 <div class="col-md-3 form-group">
                     <label>Assign Engineer<span class="text-danger">*</span></label>
                     
-                    @if (isEditable)
+                    @if (isEditable ||Model.Id==0)
                     {
                         <select name="EngineerId" class="form-control" id="engineerid" required>
                             <option value="">Select Engineer</option>
@@ -187,7 +187,7 @@
                 <div class="col-md-12 form-group">
                     <label>Complaint Details <span class="text-danger">*</span></label>
                     
-                    @if (isEditable)
+                    @if (isEditable ||Model.Id==0)
                     {
                         @Html.TextAreaFor(x => x.ComplaintDetails, 4, 100,
                             new { @class = "form-control", id = "complaintdetails", required = "required" })
@@ -203,7 +203,7 @@
             </div>
            
             <!-- Status Field - Show only when NOT draft AND NOT in view mode -->
-            @if (Model.StatusId != 1 && !isViewMode)
+            @if (Model.StatusId != 1 && !isViewMode && Model.Id>0)
             {
                 <div class="row">
                     <div class="col-md-3 form-group">
@@ -244,7 +244,7 @@
                 
                 @if (!isViewMode)
                 {
-                    if (Model.StatusId == 1)
+                    if (Model.StatusId == 1||Model.Id==0)
                     {
                         <button type="button" id="btnSaveDraft" class="btn btn-warning mt-2">
                             <i class="fas fa-save"></i> Save Draft
@@ -254,7 +254,7 @@
                             <i class="fas fa-paper-plane"></i> Submit Complaint
                         </button>
                     }
-                    else if (Model.StatusId != 1)
+                    else if (Model.StatusId != 1 ||Model.Id>0)
                     {
                         <button type="button" id="btnUpdateStatus" class="btn btn-success mt-2">
                             <i class="fas fa-sync-alt"></i> Update Status
