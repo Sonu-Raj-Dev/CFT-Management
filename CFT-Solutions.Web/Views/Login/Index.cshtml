@@ -32,6 +32,10 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
+        html, body {
+            height: 100%;
+        }
+
         body {
             background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
             display: flex;
@@ -39,6 +43,7 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            overflow-x: hidden;
         }
 
         .login-container {
@@ -54,15 +59,18 @@
         }
 
         @@keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
+            from
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         }
 
         .login-header {
@@ -78,6 +86,7 @@
             align-items: center;
             gap: 15px;
             margin-bottom: 10px;
+            flex-wrap: wrap;
         }
 
         .logo-icon {
@@ -212,6 +221,8 @@
             align-items: center;
             margin-bottom: 25px;
             font-size: 14px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .remember-me {
@@ -279,7 +290,8 @@
             font-size: 14px;
         }
 
-            .divider::before, .divider::after {
+            .divider::before,
+            .divider::after {
                 content: "";
                 flex: 1;
                 border-bottom: 1px solid var(--border-color);
@@ -351,28 +363,69 @@
                     text-decoration: underline;
                 }
 
+        /* Small screens */
         @@media (max-width: 480px) {
-            .login-container {
-                max-width: 100%;
-            }
+            body
 
-            .login-body {
-                padding: 20px;
-            }
+        {
+            padding: 10px;
+        }
 
-            .system-title {
-                font-size: 18px;
-            }
+        .login-container {
+            max-width: 100%;
+            border-radius: 10px;
+        }
 
-            .social-login {
-                gap: 10px;
-            }
+        .login-body {
+            padding: 20px 15px;
+        }
 
-            .social-btn {
-                width: 44px;
-                height: 44px;
-                font-size: 16px;
-            }
+        .login-header {
+            padding: 20px 15px;
+        }
+
+        .system-title {
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .social-login {
+            gap: 10px;
+        }
+
+        .social-btn {
+            width: 44px;
+            height: 44px;
+            font-size: 16px;
+        }
+
+        }
+
+        /* Very small screens */
+        @@media (max-width: 360px) {
+            .welcome-title
+
+        {
+            font-size: 18px;
+        }
+
+        .welcome-subtitle {
+            font-size: 13px;
+        }
+
+        .form-label {
+            font-size: 13px;
+        }
+
+        .form-control {
+            font-size: 13px;
+        }
+
         }
 
         .btn-loading {
@@ -384,16 +437,19 @@
                 display: inline-block;
                 width: 16px;
                 height: 16px;
-                border: 2px solid rgba(255,255,255,0.3);
+                border: 2px solid rgba(255, 255, 255, 0.3);
                 border-radius: 50%;
                 border-top-color: white;
                 animation: spin 1s linear infinite;
             }
 
         @@keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to
+
+        {
+            transform: rotate(360deg);
+        }
+
         }
 
         .error-message {
@@ -420,7 +476,7 @@
             width: 100%;
             height: 100%;
             z-index: 1050;
-            overflow: hidden;
+            overflow: auto;
         }
 
             .modal.show {
@@ -429,7 +485,7 @@
 
         .modal-dialog {
             position: relative;
-            width: auto;
+            width: 100%;
             margin: 0.5rem;
             max-width: 400px;
             top: 50%;
@@ -500,6 +556,7 @@
             gap: 10px;
             padding: 20px;
             border-top: 1px solid var(--border-color);
+            flex-wrap: wrap;
         }
 
         /* Modal Backdrop */
@@ -510,7 +567,6 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-            /* z-index: 1040; */
             opacity: 0;
             transition: opacity 0.15s linear;
         }
@@ -554,19 +610,6 @@
         }
 
         /* Alert Styles */
-        .alert {
-            padding: 12px 15px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-
-        .alert-danger {
-            background-color: rgba(231, 76, 60, 0.1);
-            border: 1px solid rgba(231, 76, 60, 0.3);
-            color: #c0392b;
-        }
-
         .alert-success {
             background-color: rgba(40, 167, 69, 0.1);
             border: 1px solid rgba(40, 167, 69, 0.3);
@@ -584,12 +627,10 @@
             display: block;
         }
 
-        /* Utility Classes */
         .mb-3 {
             margin-bottom: 1rem !important;
         }
 
-        /* Ensure inputs are editable */
         input[type="email"],
         input[type="password"],
         input[type="text"] {
@@ -603,7 +644,6 @@
             outline: none;
         }
 
-        /* Make sure form is accessible */
         .form-control:read-only {
             background-color: var(--gray-light);
         }
@@ -669,40 +709,11 @@
                     </div>
                 </div>
 
-               @*  <div class="form-options">
-                    <label class="remember-me">
-                        <input type="checkbox" name="RememberMe" value="true">
-                        Remember me
-                    </label>
-                    <a href="#" class="forgot-password" id="forgotPassword">Forgot password?</a>
-                </div> *@
-
                 <button type="submit" class="btn-login" id="loginButton">
                     <i class="fas fa-sign-in-alt"></i>
                     <span>Sign In</span>
                 </button>
             </form>
-
-            @* <div class="divider">Or continue with</div>
-
-            <div class="social-login">
-                <div class="social-btn google" title="Sign in with Google">
-                    <i class="fab fa-google"></i>
-                </div>
-                <div class="social-btn facebook" title="Sign in with Facebook">
-                    <i class="fab fa-facebook-f"></i>
-                </div>
-                <div class="social-btn microsoft" title="Sign in with Microsoft">
-                    <i class="fab fa-microsoft"></i>
-                </div>
-            </div> *@
-
-            @* <div class="login-footer">
-                <p>Don't have an account? <a href="#">Contact administrator</a></p>
-                <p style="margin-top: 8px; font-size: 12px; color: var(--gray-medium);">
-                    &copy; 2025 CFT Complaint Management System. All rights reserved.
-                </p>
-            </div> *@
         </div>
     </div>
 
