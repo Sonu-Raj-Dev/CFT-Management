@@ -13,7 +13,7 @@ $(document).ready(function () {
     });
 
     $('#searchInput').keypress(function (e) {
-        if (e.which === 13) {
+        if (e.which === 3) {
             loadUsers();
             return false;
         }
@@ -85,9 +85,36 @@ function addUser() {
 /**
  * Save User (Create / Update)
  */
+function validateUserForm() {
+    var isValid = true;
+
+    // reset previous error styling
+    $('#firstName, #emailId').removeClass('is-invalid');
+
+    var firstName = $('#firstName').val().trim();
+    var emailId = $('#emailId').val().trim();
+
+    if (!firstName) {
+        isValid = false;
+        $('#firstName').addClass('is-invalid');
+    }
+
+    if (!emailId) {
+        isValid = false;
+        $('#emailId').addClass('is-invalid');
+    }
+
+    //if (!isValid) {
+    //    alert('Please fill all required fields.');
+    //}
+
+    return isValid;
+}
 
 function saveUser() {
-
+    if (!validateUserForm()) {
+        return; // stop if validation fails
+    }
     var token = $('input[name="__RequestVerificationToken"]').val();
 
     var model = {
@@ -95,7 +122,7 @@ function saveUser() {
         FirstName: $('#firstName').val(),
         LastName: $('#lastName').val(),
         EmailId: $('#emailId').val(),
-        MobileNo: $('#mobileNo').val(),
+        //MobileNo: $('#mobileNo').val(),
         IsActive: $('#isActive').is(':checked')
     };
 
@@ -109,7 +136,7 @@ function saveUser() {
         success: function (data) {
 
             userModal.hide();
-
+            debugger;
             if (data.message === "CREATE") {
                 showAutoCloseMessage("User created successfully");
             }
@@ -119,6 +146,7 @@ function saveUser() {
             else {
                 showAutoCloseMessage("operation failed");
             }
+           
         },
         error: function (xhr) {
             bootbox.alert(xhr.responseText || "Something went wrong");

@@ -86,9 +86,51 @@ function addUser() {
 /**
  * Save User (Create / Update)
  */
+function validateUserForm() {
+    var isValid = true;
+
+    // reset previous error styling
+    $('#firstName, #emailId').removeClass('is-invalid');
+
+    var firstName = $('#firstName').val().trim();
+    var lastName = $('#lastName').val().trim();
+    var emailId = $('#emailId').val().trim();
+    var mobileNo = $('#mobileNo').val().trim();
+    var address = $('#address').val().trim();
+
+    if (!firstName) {
+        isValid = false;
+        $('#firstName').addClass('is-invalid');
+    }
+    if (!lastName) {
+        isValid = false;
+        $('#lastName').addClass('is-invalid');
+    }
+
+    if (!emailId) {
+        isValid = false;
+        $('#emailId').addClass('is-invalid');
+    }
+    if (!mobileNo) {
+        isValid = false;
+        $('#mobileNo').addClass('is-invalid');
+    }
+    if (!address) {
+        isValid = false;
+        $('#address').addClass('is-invalid');
+    }
+
+    //if (!isValid) {
+    //    alert('Please fill all required fields.');
+    //}
+
+    return isValid;
+}
 
 function saveUser() {
-
+    if (!validateUserForm()) {
+        return; // stop if validation fails
+    }
     var token = $('input[name="__RequestVerificationToken"]').val();
 
     var model = {

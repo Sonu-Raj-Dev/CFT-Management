@@ -86,8 +86,41 @@ function addUser() {
  * Save User (Create / Update)
  */
 
-function saveUser() {
+function validateUserForm() {
+    var isValid = true;
 
+    // reset previous error styling
+    $('#firstName, #emailId').removeClass('is-invalid');
+
+    var firstName = $('#firstName').val().trim();
+    var emailId = $('#emailId').val().trim();
+    var mobileNo = $('#mobileNo').val().trim();
+
+    if (!firstName) {
+        isValid = false;
+        $('#firstName').addClass('is-invalid');
+    }
+
+    if (!emailId) {
+        isValid = false;
+        $('#emailId').addClass('is-invalid');
+    }
+    if (!mobileNo) {
+        isValid = false;
+        $('#mobileNo').addClass('is-invalid');
+    }
+
+    //if (!isValid) {
+    //    alert('Please fill all required fields.');
+    //}
+
+    return isValid;
+}
+
+function saveUser() {
+    if (!validateUserForm()) {
+        return; // stop if validation fails
+    }
     var token = $('input[name="__RequestVerificationToken"]').val();
 
     var model = {
@@ -112,10 +145,10 @@ function saveUser() {
             userModal.hide();
 
             if (data.message === "CREATE") {
-                showAutoCloseMessage("User created successfully");
+                showAutoCloseMessage("Engineer created successfully");
             }
             else if (data.message === "UPDATE") {
-                showAutoCloseMessage("User updated successfully");
+                showAutoCloseMessage("Engineer updated successfully");
             }
             else {
                 showAutoCloseMessage("operation failed");

@@ -17,31 +17,45 @@ function validateField(fieldId, value) {
 }
 
 // Validate all required fields
-function validateAllFields() {
-    let isValid = true;
-
-    // Validate customer
-    if (!validateField('customer', $('#customerid').val())) {
+    function validateComplaintForm() {
+        let isValid = true;
+    let messages = [];
+        $(".form-control").removeClass("is-invalid");
+    // Customer
+    if ($("#customerid").val() === "" || $("#customerid").val() === null) {
         isValid = false;
+        $("#customerid").addClass("is-invalid");
+        }
+
+    // Nature of Complaint
+    if ($("#natureofcomplaintId").val() === "" || $("#natureofcomplaintId").val() === null) {
+        isValid = false;
+        $("#natureofcomplaintId").addClass("is-invalid");
+        }
+
+    // Engineer
+    if ($("#engineerid").val() === "" || $("#engineerid").val() === null) {
+        isValid = false;
+     
+        $("#engineerid").addClass("is-invalid");
+        }
+
+    // Complaint Details
+    if ($("#complaintdetails").val().trim() === "") {
+        isValid = false;
+    
+        $("#complaintdetails").addClass("is-invalid");
+        }
+
+    // Show message
+    if (!isValid) {
+        alert(messages.join("\n"));
+    return false;
+        }
+
+    return true;
     }
 
-    // Validate nature of complaint
-    if (!validateField('nature', $('#natureofcomplaintId').val())) {
-        isValid = false;
-    }
-
-    // Validate engineer
-    if (!validateField('engineer', $('#engineerid').val())) {
-        isValid = false;
-    }
-
-    // Validate complaint details
-    if (!validateField('details', $('#complaintdetails').val())) {
-        isValid = false;
-    }
-
-    return isValid;
-}
 
 // Show success message
 function showSuccess(message) {
@@ -148,8 +162,8 @@ function resetForm() {
 function saveComplaint(actionType) {
     debugger;
     // Validate all fields
-    if (!validateAllFields()) {
-        showError('Please fill all required fields');
+    if (!validateComplaintForm()) {
+        
         return;
     }
 
