@@ -49,7 +49,7 @@ function validateField(fieldId, value) {
 
     // Show message
     if (!isValid) {
-        alert(messages.join("\n"));
+       // alert(messages.join("\n"));
     return false;
         }
 
