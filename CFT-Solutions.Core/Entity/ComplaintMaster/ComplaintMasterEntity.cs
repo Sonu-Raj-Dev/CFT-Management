@@ -30,6 +30,10 @@ namespace CFT_Solutions.Core.Entity.ComplaintMaster
 
         public string CreatedDateStr { get; set; }
         public string ModifiedDateStr { get; set; }
+        public DateTime? CompletionDate { get; set; }
+        public string CompletionDatestr { get; set; }
+        public string Remark { get; set; }
+        public string CompletedByUser { get; set; }
         public List<ComplaintMasterEntity> CustomersList { get; set; }
         public List<ComplaintMasterEntity> NatureOfComplaintsList { get; set; }
         public List<ComplaintMasterEntity> EngineerList { get; set; }

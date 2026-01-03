@@ -293,6 +293,9 @@ function loadUsers() {
             { data: 'engineerName' },
             { data: 'createdDateStr' },
             { data: 'createdByUser' },
+            { data: 'completedByUser' },
+            { data: 'completionDatestr' },
+
             //{ data: 'password' },
             //{
             //    data: 'isActive',
@@ -393,17 +396,31 @@ $('#btnUpdateStatus').click(function (e) {
 });
 function UpdateStatus(complaintId) {
     debugger;
-    // Load status options via AJAX
-    $.ajax({
-        url: BaseUrl + '/ComplaintMaster/UpdateComplaintStatusById',
-        type: 'POST',
-        data: { complaintId: complaintId },
-        beforeSend: function () {
-            showLoading(true);
-        },
-        success: function (statusOptions) {
-            hideLoading();
-            window.location.href = BaseUrl+"/ComplaintMaster/Index"
-        }
-    })
+    let isValid = true;
+    $(".form-control").removeClass("is-invalid");
+    // Customer
+    if ($("#Remark").val() === "" || $("#Remark").val() === null) {
+        isValid = false;
+        $("#Remark").addClass("is-invalid");
+    }
+    if ($("#statusid").val() === "" || $("#statusid").val() === null) {
+        isValid = false;
+        $("#statusid").addClass("is-invalid");
+    }
+    if (isValid) {
+        $.ajax({
+            url: BaseUrl + '/ComplaintMaster/UpdateComplaintStatusById',
+            type: 'POST',
+            data: { complaintId: complaintId, Remark: $("#Remark").val() },
+            beforeSend: function () {
+                showLoading('#btnUpdateStatus',true);
+            },
+            success: function (statusOptions) {
+                //hideLoading();
+                window.location.href = BaseUrl + "/ComplaintMaster/Index"
+            }
+        })
+    }
+    
+   
 }

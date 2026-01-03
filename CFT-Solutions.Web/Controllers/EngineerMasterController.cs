@@ -35,7 +35,7 @@ namespace CFT_Solutions.Web.Controllers
         /// </summary>
         public IActionResult Index()
         {
-            if (base._workContext.CurrentUser.DefaultPermissions.Contains(PermissionEnum.UserMaster.ToString()))
+            if (base._workContext.CurrentUser.DefaultPermissions.Contains(PermissionEnum.EngineerMaster.ToString()))
             {
                 return View();
             }

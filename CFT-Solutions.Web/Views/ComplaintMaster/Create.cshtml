@@ -276,8 +276,19 @@
                         @Html.ValidationMessageFor(x => x.StatusId, "", new { @class = "text-danger" })
                     </div>
                 </div>
+                <div class="row g-3 mt-2">
+                    <div class="col-12 col-sm-6 col-md-3">
+                    <div class="form-group">
+                        <label> Remark <span class="text-danger">*</span></label>
+
+                            @Html.TextAreaFor(x => x.Remark, 4, 100,
+                                                        new { @class = "form-control bg-light", id = "Remark", required = "required" })
+                            @Html.ValidationMessageFor(x => x.Remark, "", new { @class = "text-danger" })
+                    </div>
+                    </div>
+                </div>
             </div>
-                        }
+              }
             else if (Model.StatusId != 1 && isViewMode)
             {
                 <div class="row g-3 mt-2">
@@ -295,6 +306,17 @@
                         </div>
                     </div>
                 </div>
+                <div class="row g-3 mt-2">
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="form-group">
+                            <label> Remark <span class="text-danger">*</span></label>
+
+                            @Html.TextAreaFor(x => x.Remark, 4, 100,
+                            new { @class = "form-control bg-light", id = "Remark", required = "required" })
+                        @Html.ValidationMessageFor(x => x.Remark, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
             }
 
             <!-- Buttons -->

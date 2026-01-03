@@ -140,7 +140,7 @@ namespace CFT_Solutions.Service.ComplaintMster
                 throw;
             }
         }
-        public object UpdateComplaintStatusById(Int64 ComplaintId, Int64 UpdatedBy)
+        public object UpdateComplaintStatusById(Int64 ComplaintId, Int64 UpdatedBy,string Remark)
         {
             try
             {
@@ -148,6 +148,8 @@ namespace CFT_Solutions.Service.ComplaintMster
                 command.CommandType = System.Data.CommandType.StoredProcedure;
                 command.Parameters.Add("@ComplaintId", SqlDbType.BigInt).Value = ComplaintId;
                 command.Parameters.Add("@UpdatedBy", SqlDbType.BigInt).Value = UpdatedBy;
+                command.Parameters.Add("@Remark", SqlDbType.VarChar).Value = Remark;
+
 
                 var data = _complaintMasterRepository.ExecuteProc(command);
                 return data;

@@ -17,6 +17,6 @@ namespace CFT_Solutions.Service.ComplaintMster
         List<ComplaintMasterEntity> GetCustomer();
         List<ComplaintMasterEntity> GetNatureOfComplaint();
         List<ComplaintMasterEntity> GetEngineerList();
-        object UpdateComplaintStatusById(Int64 ComplaintId, Int64 UpdatedBy);
+        object UpdateComplaintStatusById(Int64 ComplaintId, Int64 UpdatedBy,string Remark);
     }
 }

@@ -35,8 +35,14 @@ namespace CFT_Solutions.Web.Controllers
 
         public IActionResult Index()
         {
-
-            return View();
+            if (base._workContext.CurrentUser.DefaultPermissions.Contains(PermissionEnum.ComplaintMaster.ToString()))
+            {
+                return View();
+            }
+            else
+            {
+                return AccessDeniedView();
+            }
         }
         public IActionResult GetDashBoardData(string searchtext)
         {
@@ -64,6 +70,14 @@ namespace CFT_Solutions.Web.Controllers
                         else
                         {
                             item.ModifiedDateStr = "";
+                        }
+                        if (item.CompletionDate != null)
+                        {
+                            item.CompletionDatestr = item.CompletionDate.Value.ToString("dd-MM-yyyy");
+                        }
+                        else
+                        {
+                            item.CompletionDatestr = "";
                         }
 
 
@@ -106,6 +120,7 @@ namespace CFT_Solutions.Web.Controllers
                             model.IsActive = data.IsActive;
                             model.EngineerId = data.EngineerId;
                             model.StatusId = data.StatusId;
+                            model.Remark = data.Remark;
                         }
                     }
                 }
@@ -249,12 +264,12 @@ namespace CFT_Solutions.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateComplaintStatusById(Int64 ComplaintId)
+        public IActionResult UpdateComplaintStatusById(Int64 ComplaintId,string Remark)
         {
             try
             {
                 var CurruntUserId = _workContext.CurrentUser.Id;
-                var data = _complaintasterService.UpdateComplaintStatusById(ComplaintId,CurruntUserId);
+                var data = _complaintasterService.UpdateComplaintStatusById(ComplaintId,CurruntUserId,Remark);
 
                 return Json(new
                 {            

@@ -152,23 +152,41 @@
 
     <!-- SIDEBAR -->
     <aside class="app-sidebar">
-        <a asp-controller="ComplaintMaster" asp-action="Index"
-           class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "ComplaintMaster" ? "active" : "")">
-            <i class="fas fa-exclamation-circle"></i> Complaints
-        </a>
 
-        <a asp-controller="UserMaster" asp-action="Index">
-            <i class="fas fa-users"></i> User Master
-        </a>
+        @if (WorkContext.CurrentUser.DefaultPermissions.Contains("ComplaintMaster"))
+        {
+            <a asp-controller="ComplaintMaster" asp-action="Index"
+               class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "ComplaintMaster" ? "active" : "")">
+                <i class="fas fa-exclamation-circle"></i> Complaints
+            </a>
+        }
 
-        <a asp-controller="EngineerMaster" asp-action="Index">
-            <i class="fas fa-tools"></i> Engineers
-        </a>
+        @if (WorkContext.CurrentUser.DefaultPermissions.Contains("UserMaster"))
+        {
+            <a asp-controller="UserMaster" asp-action="Index"
+               class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "UserMaster" ? "active" : "")">
+                <i class="fas fa-users"></i> User Master
+            </a>
+        }
 
-        <a asp-controller="CustomerMaster" asp-action="Index">
-            <i class="fas fa-user-tie"></i> Customers
-        </a>
+        @if (WorkContext.CurrentUser.DefaultPermissions.Contains("EngineerMaster"))
+        {
+            <a asp-controller="EngineerMaster" asp-action="Index"
+               class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "EngineerMaster" ? "active" : "")">
+                <i class="fas fa-tools"></i> Engineers
+            </a>
+        }
+
+        @if (WorkContext.CurrentUser.DefaultPermissions.Contains("CustomerMaster"))
+        {
+            <a asp-controller="CustomerMaster" asp-action="Index"
+               class="@(ViewContext.RouteData.Values["Controller"]?.ToString() == "CustomerMaster" ? "active" : "")">
+                <i class="fas fa-user-tie"></i> Customers
+            </a>
+        }
+
     </aside>
+
 
     <!-- MAIN -->
     <main class="app-main">
