@@ -59,17 +59,9 @@ function validateField(fieldId, value) {
 
 // Show success message
 function showSuccess(message) {
-    const dialog = bootbox.alert({
-        title: "<i class='fa fa-check-circle text-success'></i> Success",
-        message: message,
-        centerVertical: true,
-        backdrop: false
-    });
-
-    setTimeout(function () {
-        dialog.modal('hide');
-    }, 1500);
+    alert("Success: " + message);
 }
+
 
 
 // Make this function globally available
