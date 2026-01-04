@@ -37,6 +37,7 @@ namespace CFT_Solutions.Web.Controllers
         {
             if (base._workContext.CurrentUser.DefaultPermissions.Contains(PermissionEnum.ComplaintMaster.ToString()))
             {
+                ViewBag.CurruntUserRoleId = _workContext.CurrentUser.DefaultRoleId;
                 return View();
             }
             else
@@ -83,6 +84,7 @@ namespace CFT_Solutions.Web.Controllers
 
                         item.EncryptedParam = _encryptionService.EncryptString(item.Id.ToString(), "Encrypt");
                     }
+                  
                 }
                 return Json(data);
             }
@@ -125,7 +127,7 @@ namespace CFT_Solutions.Web.Controllers
                     }
                 }
                 ViewBag.IsView = IsView;
-
+        
                 model.CustomersList = _complaintasterService.GetCustomer().Select(x => new ComplaintMasterEntity
                 {
                     Id = x.Id,

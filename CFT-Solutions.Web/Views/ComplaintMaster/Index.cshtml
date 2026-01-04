@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Complaint Master";
+    var CurruntUserRoleId = ViewBag.CurruntUserRoleId;
 }
 
 <div class="container-fluid mt-4">
@@ -10,8 +11,10 @@
         </div>
 
         <!-- Button: full width + centered on small, right-aligned on md+ -->
-        <div class="col-12 col-md-4 d-grid d-md-flex justify-content-md-end">
-            <button type="button"
+        @if (CurruntUserRoleId == 1)
+        {
+            <div class="col-12 col-md-4 d-grid d-md-flex justify-content-md-end">
+                <button type="button"
                     class="btn btn-primary newRequestbtn w-100 w-md-auto"
                     data-toggle="modal"
                     data-target="#myModal"
@@ -19,6 +22,7 @@
                 <i class="fa fa-plus my-float"></i> Add Complaint
             </button>
         </div>
+        }
     </div>
 
     <!-- Search Box -->
